@@ -1,0 +1,631 @@
+{
+  "app": {
+    "name": "The Archivist",
+    "tagline": "Household Finance",
+    "localOnly": "Solo local · Sin sincronización"
+  },
+  "nav": {
+    "overview": "Resumen",
+    "fondos": "Fondos",
+    "reminders": "Recordatorios",
+    "journal": "Bitácora",
+    "reports": "Reportes",
+    "assistant": "Asistente IA",
+    "rewards": "Recompensas",
+    "profile": "Mi Perfil"
+  },
+  "fondos": {
+    "title": "Fondos",
+    "subtitle": "Cuentas, transferencias, distribución y deudas",
+    "savingsFunds": "Fondos de ahorro",
+    "savingsGoals": "Metas y Ahorros",
+    "totalSavingsGoals": "Total ahorrado",
+    "noSavingsGoals": "Sin metas ni fondos todavía.",
+    "contributionsFor": "Aportaciones — {{name}}",
+    "addContribution": "Agregar aportación",
+    "contributionHistory": "Historial",
+    "noContributions": "Sin aportaciones aún.",
+    "deleteFundTitle": "Eliminar fondo",
+    "deleteFundConfirm": "¿Seguro que deseas eliminar \"{{name}}\"? También se eliminarán todas sus aportaciones.",
+    "tabs": {
+      "accounts": "Cuentas",
+      "transfers": "Transferencias",
+      "distribution": "Distribución",
+      "debts": "Deudas"
+    }
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "saveChanges": "Guardar cambios",
+    "add": "Agregar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "close": "Cerrar",
+    "loading": "Cargando...",
+    "noData": "Sin datos",
+    "amount": "Monto",
+    "date": "Fecha",
+    "description": "Descripción",
+    "category": "Categoría",
+    "account": "Cuenta",
+    "type": "Tipo",
+    "name": "Nombre",
+    "all": "Todos",
+    "monthly": "Mensual",
+    "weekly": "Semanal",
+    "yearly": "Anual",
+    "optional": "opcional",
+    "selectCategory": "Seleccionar categoría",
+    "selectAccount": "Seleccionar cuenta",
+    "fixed": "Fijo",
+    "variable": "Variable"
+  },
+  "overview": {
+    "title": "Resumen",
+    "subtitle": "Resumen financiero del hogar",
+    "tabs": {
+      "dashboard": "Panel",
+      "income": "Ingresos",
+      "expenses": "Gastos"
+    },
+    "dashboard": {
+      "income": "Ingresos",
+      "expenses": "Gastos",
+      "netBalance": "Balance neto",
+      "totalBalance": "Balance total",
+      "totalSavings": "Total ahorros",
+      "totalDebts": "Total deudas",
+      "recentTransactions": "Transacciones recientes",
+      "noTransactions": "Sin transacciones aún",
+      "upcomingPayments": "Próximos pagos",
+      "noUpcomingPayments": "Sin pagos próximos",
+      "overdue": "Vencido",
+      "dueOn": "Vence el {{date}}",
+      "tooltips": {
+        "income": "Total de ingresos registrados este mes en todas las cuentas.",
+        "expenses": "Total de gastos variables y fijos pagados este mes.",
+        "netBalance": "Ingresos menos gastos este mes. Positivo significa que ahorraste.",
+        "totalBalance": "Suma del saldo actual de todas tus cuentas.",
+        "totalSavings": "Monto total acumulado en todos tus fondos de ahorro.",
+        "totalDebts": "Saldo pendiente total de todas tus deudas activas."
+      }
+    },
+    "income": {
+      "records": "{{count}} registros",
+      "addIncome": "Agregar ingreso",
+      "noIncome": "Sin ingresos registrados aún.",
+      "source": "Fuente",
+      "egEmployer": "Ej: Nombre del empleador",
+      "editTitle": "Editar ingreso",
+      "addTitle": "Agregar ingreso"
+    },
+    "expenses": {
+      "count": "{{count}} gastos",
+      "scanReceipt": "Escanear recibo",
+      "addExpense": "Agregar gasto",
+      "noExpenses": "Sin gastos en esta categoría.",
+      "noExpensesYet": "Sin gastos registrados aún.",
+      "editTitle": "Editar gasto",
+      "addTitle": "Agregar gasto",
+      "receiptScanned": "Gasto agregado desde el recibo",
+      "scanFailed": "Error al escanear recibo",
+      "receiptPreviewTitle": "Vista previa del recibo",
+      "receiptDetectedBadge": "Detectado por IA",
+      "viewAll": "General",
+      "viewMonth": "Por mes",
+      "noExpensesMonth": "Sin gastos este mes."
+    }
+  },
+  "accounts": {
+    "title": "Cuentas",
+    "subtitle": "Administra tus cuentas financieras y transferencias",
+    "tabs": {
+      "accounts": "Cuentas",
+      "transfers": "Transferencias"
+    },
+    "totalBalance": "Balance total",
+    "addAccount": "Agregar cuenta",
+    "noAccounts": "Sin cuentas aún. Agrega una para comenzar.",
+    "initialBalance": "Inicial: {{amount}}",
+    "editTitle": "Editar cuenta",
+    "accountName": "Nombre de la cuenta",
+    "egChase": "Ej: Chase Checking",
+    "initialBalanceLabel": "Balance inicial",
+    "types": {
+      "checking": "Corriente",
+      "savings": "Ahorros",
+      "cash": "Efectivo",
+      "investment": "Inversión"
+    },
+    "transfers": {
+      "newTransfer": "Nueva transferencia",
+      "fromAccount": "Cuenta origen",
+      "toAccount": "Cuenta destino",
+      "note": "Nota (opcional)",
+      "transferFunds": "Transferir fondos",
+      "history": "Historial de transferencias",
+      "noTransfers": "Sin transferencias aún.",
+      "from": "De",
+      "to": "A"
+    }
+  },
+  "goalsDebts": {
+    "title": "Metas y Deudas",
+    "subtitle": "Sigue tu progreso en metas financieras y pago de deudas",
+    "tabs": {
+      "goals": "Metas",
+      "debts": "Deudas"
+    },
+    "goals": {
+      "count": "{{count}} metas",
+      "newGoal": "Nueva meta",
+      "noGoals": "Sin metas aún. Establece tu primera meta financiera.",
+      "target": "Meta: {{date}}",
+      "achieved": "% alcanzado",
+      "editTitle": "Editar meta",
+      "createTitle": "Nueva meta",
+      "icon": "Ícono",
+      "goalName": "Nombre de la meta",
+      "egEmergencyFund": "Ej: Fondo de emergencia",
+      "targetAmount": "Monto objetivo",
+      "currentAmount": "Monto actual",
+      "targetDate": "Fecha objetivo (opcional)",
+      "createGoal": "Crear meta"
+    },
+    "debts": {
+      "paymentsFor": "Pagos — {{name}}",
+      "logPayment": "Registrar pago",
+      "history": "Historial",
+      "noPayments": "Sin pagos aún.",
+      "totalRemaining": "Total restante",
+      "addDebt": "Agregar deuda",
+      "noDebts": "Sin deudas registradas. ¡Excelente!",
+      "remaining": "Restante",
+      "minPayment": "Pago mín.",
+      "interest": "Interés",
+      "pctPaid": "% pagado",
+      "logPaymentAction": "Registrar pago",
+      "editTitle": "Editar deuda",
+      "addTitle": "Agregar deuda",
+      "debtName": "Nombre de la deuda",
+      "egCarLoan": "Ej: Préstamo de auto",
+      "creditor": "Acreedor",
+      "egBankName": "Ej: Nombre del banco",
+      "totalAmount": "Monto total",
+      "remainingBalance": "Saldo restante",
+      "interestRate": "Tasa de interés (%)",
+      "minimumPayment": "Pago mínimo",
+      "cutDate": "Fecha de corte",
+      "paymentDue": "Fecha de pago",
+      "cutDateLabel": "Día de corte",
+      "paymentDueLabel": "Día de pago",
+      "dayPlaceholder": "Ej: 15",
+      "dayOfMonth": "Día {{day}}",
+      "billingCycle": "Ciclo de facturación (opcional)",
+      "createReminder": "Crear recordatorio",
+      "paymentOf": "Pago —"
+    }
+  },
+  "budget": {
+    "title": "Presupuesto",
+    "subtitle": "Distribuye ingresos y administra fondos de ahorro",
+    "tabs": {
+      "distribution": "Distribución",
+      "savings": "Fondos"
+    },
+    "distribution": {
+      "title": "Distribución de ingresos",
+      "visualization": "Visualización",
+      "egCategory": "Ej: Diezmo, Inversiones, Ocio...",
+      "total": "Total: {{pct}}%",
+      "missing": "Faltan {{pct}}%",
+      "exceeds": "Excede {{pct}}%",
+      "save": "Guardar distribución",
+      "emptyChart": "Agrega categorías para ver la gráfica",
+      "comparison": "Presupuesto vs Real",
+      "comparisonSub": "Cómo van tus gastos frente al plan este mes",
+      "budget": "Presupuesto",
+      "actual": "Gastado",
+      "remaining": "Disponible",
+      "over": "Excedido",
+      "noIncome": "Define un ingreso mensual para ver los montos del presupuesto.",
+      "unmatched": "Gastos sin categoría",
+      "noBudget": "Sin presupuesto"
+    },
+    "savings": {
+      "totalSavings": "Total ahorros",
+      "newFund": "Nuevo fondo",
+      "noFunds": "Sin fondos de ahorro aún. Crea uno para empezar a ahorrar.",
+      "hide": "Ocultar",
+      "manage": "Administrar",
+      "contributions": "aportaciones",
+      "addFundTitle": "Nuevo fondo de ahorro",
+      "fundName": "Nombre del fondo",
+      "egEmergencyFund": "Ej: Fondo de emergencia",
+      "linkGoal": "Vincular a meta (opcional)",
+      "noGoal": "Sin meta",
+      "createFund": "Crear fondo"
+    }
+  },
+  "reminders": {
+    "title": "Recordatorios de pagos",
+    "subtitle": "Servicios y suscripciones — total mensual: {{total}}",
+    "addService": "Agregar servicio",
+    "overdue": "Vencidos ({{count}})",
+    "overdueBy": "Vencido hace {{days}} días",
+    "dueToday": "Vence hoy",
+    "dueTomorrow": "Vence mañana",
+    "dueInDays": "En {{days}} días",
+    "markPaid": "Marcar pagado",
+    "soon": "Próximos 7 días ({{count}})",
+    "paid": "Pagado",
+    "later": "Próximos 30 días ({{count}})",
+    "allGood": "Todo al día",
+    "noUpcoming": "No hay pagos próximos en los siguientes 30 días.",
+    "addFirst": "Agregar primer servicio",
+    "allActive": "Todos los servicios activos",
+    "renewal": "Renovación: {{date}}",
+    "lastPaid": "Último pago: {{date}}",
+    "inactive": "Inactivos",
+    "reactivate": "Reactivar",
+    "editTitle": "Editar servicio",
+    "addTitle": "Nuevo servicio o suscripción",
+    "serviceName": "Nombre del servicio",
+    "egService": "Ej: Netflix, Seguro, Internet...",
+    "paymentDay": "Día de pago",
+    "frequency": "Frecuencia",
+    "renewalDate": "Fecha de renovación (opcional)"
+  },
+  "journal": {
+    "title": "Bitácora financiera",
+    "subtitle": "Registra cómo te sientes, qué te preocupa o qué quieres mejorar. El asistente tomará esto en cuenta.",
+    "newEntry": "Nueva entrada",
+    "empty": "Tu bitácora está vacía",
+    "emptyHint": "Escribe sobre algo que te esté afectando o que quieras cambiar en tus finanzas.",
+    "createFirst": "Crear primera entrada",
+    "editTitle": "Editar entrada",
+    "newTitle": "Nueva entrada de bitácora",
+    "titleLabel": "Título",
+    "titlePlaceholder": "Ej: Gasté más de lo planeado este mes...",
+    "howDoYouFeel": "¿Cómo te sientes?",
+    "whatToRecord": "¿Qué quieres registrar?",
+    "contentPlaceholder": "Escribe libremente sobre tu situación financiera, lo que te preocupa, metas que quieres alcanzar, hábitos que quieres cambiar...",
+    "saveEntry": "Guardar entrada",
+    "showLess": "Ver menos",
+    "showMore": "Ver más",
+    "moods": {
+      "stressed": "Estresado",
+      "neutral": "Neutral",
+      "positive": "Positivo"
+    },
+    "timeAgo": {
+      "minutes": "Hace {{n}} min",
+      "hours": "Hace {{n}}h",
+      "yesterday": "Ayer",
+      "days": "Hace {{n}} días"
+    }
+  },
+  "assistant": {
+    "history": {
+      "newChat": "Nueva conversación",
+      "today": "Hoy",
+      "yesterday": "Ayer",
+      "empty": "Sin conversaciones aún",
+      "receiptTitle": "Escaneo de recibo",
+      "receiptSent": "📷 Recibo enviado"
+    },
+    "title": "Asistente IA",
+    "subtitle": "Asesoría financiera y escaneo de recibos",
+    "tabs": {
+      "chat": "Asesor IA",
+      "receipt": "Escanear recibo"
+    },
+    "chat": {
+      "modes": {
+        "strict": "Estricto",
+        "strictDesc": "Máxima rigurosidad",
+        "moderate": "Moderado",
+        "moderateDesc": "Balance objetivo",
+        "secondOpinion": "Segunda opinión",
+        "secondOpinionDesc": "Solo informar"
+      },
+      "suggestions": {
+        "general": "Sugerencias generales",
+        "purchase": "Decisiones de compra"
+      },
+      "generalPrompts": [
+        "¿Cómo voy este mes?",
+        "¿Qué priorizo: ahorro o deuda?",
+        "Analiza mis patrones de gasto",
+        "¿Cómo alcanzo mis metas más rápido?"
+      ],
+      "purchasePrompts": [
+        "¿Es buena idea comprar esto?",
+        "Quiero comprar esto porque lo necesito para trabajo",
+        "¿Hay una alternativa más económica?",
+        "¿Puedo permitirme esto ahora?"
+      ],
+      "advisorLabel": "Asesor Financiero · {{mode}}",
+      "imageAttached": "adjunto",
+      "connectionError": "No pude conectarme al asesor. Verifica que GROQ_API_KEY esté configurado.",
+      "attachReceipt": "Adjuntar recibo",
+      "purchasePlaceholder": "Describe qué quieres comprar y por qué...",
+      "generalPlaceholder": "Pregunta a tu asesor financiero...",
+      "receiptAnalyzing": "Leyendo recibo...",
+      "receiptDetected": "Gasto detectado",
+      "receiptError": "No pude extraer datos de la imagen. Asegúrate de que sea una foto clara de un recibo.",
+      "receiptConfirm": "Agregar gasto",
+      "receiptDiscard": "Descartar",
+      "receiptSaved": "Gasto guardado exitosamente",
+      "receiptHint": "Envía la foto de un recibo y detecto los datos del gasto automáticamente.",
+      "receiptNoData": "No encontré un recibo en esta imagen."
+    },
+    "receipt": {
+      "uploadLabel": "Subir imagen del recibo",
+      "dragDrop": "Arrastra o haz clic para buscar",
+      "fileTypes": "JPEG, PNG hasta 10MB",
+      "analyzing": "Analizando recibo...",
+      "analyzingHint": "Extrayendo los detalles",
+      "extractedData": "Datos extraídos",
+      "merchant": "Comercio",
+      "saveAsExpense": "Guardar como gasto",
+      "recentScans": "Escaneos recientes",
+      "noScans": "Sin escaneos aún. Sube un recibo para comenzar.",
+      "unknownMerchant": "Comercio desconocido",
+      "noDate": "Sin fecha extraída"
+    }
+  },
+  "rewards": {
+    "title": "Recompensas",
+    "subtitle": "{{earned}} de {{total}} logros desbloqueados",
+    "enableSystem": "Activar sistema",
+    "disabled": "El sistema de recompensas está desactivado. Actívalo para empezar a ganar logros.",
+    "earned": "Ganados ({{count}})",
+    "pending": "Por desbloquear ({{count}})",
+    "empty": "Aún no tienes recompensas",
+    "emptyHint": "¡Sigue mejorando tus finanzas para desbloquearlas!",
+    "loading": "Cargando recompensas...",
+    "progress": "Progreso",
+    "gift": "Regalo",
+    "earnedOn": "Ganado el {{date}}",
+    "hiddenSection": "Logros Ocultos",
+    "hiddenSectionHint": "Estos logros se desbloquean con acciones especiales. Explora la app para descubrirlos.",
+    "hiddenHint": "Este logro se desbloquea con una acción especial dentro de la app.",
+    "hiddenProgress": "Sigue usando la app para descubrir cómo desbloquearlo.",
+    "tiers": {
+      "bronze": "Bronce: {{earned}} / {{total}}",
+      "silver": "Plata: {{earned}} / {{total}}",
+      "gold": "Oro: {{earned}} / {{total}}"
+    },
+    "keys": {
+      "savings_500": {
+        "name": "Primer Paso",
+        "description": "Lograste acumular $500 en ahorros.",
+        "gift": "Una cena especial para dos en tu restaurante favorito."
+      },
+      "savings_2500": {
+        "name": "Ahorro Sólido",
+        "description": "$2,500 ahorrados — ya tienes una base real.",
+        "gift": "Un día de spa o masaje — te lo mereces."
+      },
+      "savings_5000": {
+        "name": "Base Firme",
+        "description": "¡Cinco mil dólares en tu reserva!",
+        "gift": "Un fin de semana de escapada familiar."
+      },
+      "savings_10000": {
+        "name": "Diez de Diez",
+        "description": "$10,000 ahorrados — estás construyendo patrimonio.",
+        "gift": "Un concierto o evento cultural especial."
+      },
+      "savings_25000": {
+        "name": "Patrimonio Real",
+        "description": "$25,000 ahorrados. Estás en otro nivel.",
+        "gift": "El viaje internacional que siempre soñaste."
+      },
+      "emergency_25": {
+        "name": "Escudo Inicial",
+        "description": "Tu fondo de emergencia llegó al 25%.",
+        "gift": "Una noche de cine en casa con comida especial."
+      },
+      "emergency_50": {
+        "name": "Medio Blindado",
+        "description": "Fondo de emergencia al 50% — ya puedes respirar.",
+        "gift": "Una excursión de un día a un lugar cercano."
+      },
+      "emergency_75": {
+        "name": "Casi Seguro",
+        "description": "75% de tu fondo de emergencia completo.",
+        "gift": "Una noche en un hotel boutique local."
+      },
+      "emergency_100": {
+        "name": "Blindado Total",
+        "description": "¡Fondo de emergencia completo! Eres imparable.",
+        "gift": "Unas vacaciones familiares bien merecidas."
+      },
+      "goal_first": {
+        "name": "Visionario",
+        "description": "Creaste tu primera meta financiera.",
+        "gift": "Un libro de finanzas personales para seguir aprendiendo."
+      },
+      "goal_50pct": {
+        "name": "En Marcha",
+        "description": "Una de tus metas llegó al 50% de progreso.",
+        "gift": "Una tarde libre dedicada a algo que genuinamente disfrutes."
+      },
+      "goal_complete_1": {
+        "name": "Meta Cumplida",
+        "description": "¡Completaste tu primera meta financiera!",
+        "gift": "Tú decides: celebra como mereces este logro."
+      },
+      "goal_complete_3": {
+        "name": "Tres de Tres",
+        "description": "Tres metas financieras completadas.",
+        "gift": "Una experiencia premium — tú eliges qué la vale."
+      },
+      "debt_10pct": {
+        "name": "Atacando la Deuda",
+        "description": "Redujiste tu deuda total en un 10%.",
+        "gift": "Un café especial y una mañana tranquila para celebrar."
+      },
+      "debt_25pct": {
+        "name": "Rompiendo Cadenas",
+        "description": "¡25% menos de deuda total!",
+        "gift": "Una cena familiar en tu restaurante favorito."
+      },
+      "debt_50pct": {
+        "name": "Mitad Libre",
+        "description": "Eliminaste la mitad de tu deuda original.",
+        "gift": "Un fin de semana de aventura familiar."
+      },
+      "debt_free": {
+        "name": "Totalmente Libre",
+        "description": "¡Eliminaste todas tus deudas! Eres libre.",
+        "gift": "El viaje que siempre quisiste hacer — sin culpa."
+      },
+      "journal_1": {
+        "name": "Primer Reflejo",
+        "description": "Escribiste tu primera entrada en la bitácora.",
+        "gift": "Un momento de paz y tu bebida favorita."
+      },
+      "journal_5": {
+        "name": "Reflexivo",
+        "description": "5 entradas en tu bitácora financiera.",
+        "gift": "Un diario físico bonito para acompañar tu proceso."
+      },
+      "journal_10": {
+        "name": "Constante",
+        "description": "10 entradas — la constancia es tu superpoder.",
+        "gift": "Una sesión de coaching o mentoría financiera."
+      },
+      "surplus_1": {
+        "name": "Mes en Verde",
+        "description": "Tu primer mes cerrando con balance positivo.",
+        "gift": "Algo pequeño que hayas querido por un tiempo."
+      },
+      "surplus_3": {
+        "name": "Trimestre Ganador",
+        "description": "3 meses consecutivos con balance positivo.",
+        "gift": "Una experiencia especial — cine, teatro o concierto."
+      },
+      "surplus_6": {
+        "name": "Semestre Imparable",
+        "description": "6 meses en positivo. Eres un ejemplo a seguir.",
+        "gift": "Una inversión en ti mismo: curso, viaje o experiencia."
+      },
+      "hidden_ask_before_buy": {
+        "name": "El Que Pregunta Antes de Comprar",
+        "description": "Consultaste al asistente antes de hacer una compra.",
+        "gift": "Sabiduría financiera: un podcast o libro que cambió vidas."
+      },
+      "hidden_budget_chat": {
+        "name": "El Arquitecto del Presupuesto",
+        "description": "Le preguntaste al asistente cómo organizar tu presupuesto.",
+        "gift": "Una hoja de cálculo premium de presupuesto mensual."
+      },
+      "hidden_night_owl": {
+        "name": "El Búho de las Finanzas",
+        "description": "Estabas gestionando tus finanzas después de las 10 PM.",
+        "gift": "Tu bebida nocturna favorita — lo mereces."
+      },
+      "hidden_monthly_5": {
+        "name": "El Registrador Obsesivo",
+        "description": "Registraste más de 5 movimientos en un mes.",
+        "gift": "Una app de productividad premium por un mes."
+      },
+      "hidden_debt_and_goal": {
+        "name": "El Equilibrista",
+        "description": "Tienes una deuda y una meta activa al mismo tiempo.",
+        "gift": "Un cuaderno para planificar tu estrategia financiera."
+      },
+      "hidden_categories": {
+        "name": "El Explorador de Categorías",
+        "description": "Registraste gastos en 5 categorías distintas.",
+        "gift": "Un curso en línea de finanzas personales."
+      }
+    }
+  },
+  "profile": {
+    "title": "Mi Perfil Financiero",
+    "subtitle": "Esta información ayuda al asistente a darte consejos personalizados.",
+    "sections": {
+      "basic": "Información básica",
+      "situation": "Situación financiera actual",
+      "goalsAndConcerns": "Metas y preocupaciones",
+      "aiContext": "Contexto adicional para el asistente"
+    },
+    "nameLabel": "¿Cómo te llamas?",
+    "namePlaceholder": "Tu nombre",
+    "situationLabel": "¿Cómo describirías tu situación financiera actual?",
+    "situationPlaceholder": "Ej: Trabajo como empleado, tengo un ingreso estable pero siento que los gastos siempre superan lo que gano...",
+    "riskTolerance": "Tolerancia al riesgo",
+    "riskLevels": {
+      "conservative": "Conservador — prefiero seguridad sobre rendimiento",
+      "moderate": "Moderado — equilibrio entre seguridad y crecimiento",
+      "aggressive": "Agresivo — priorizo el crecimiento aunque haya riesgo"
+    },
+    "goalsLabel": "¿Qué quieres lograr con tus finanzas?",
+    "goalsPlaceholder": "Ej: Quiero ahorrar para comprar una casa en 3 años, eliminar mis deudas de tarjeta y tener un fondo de emergencia de 6 meses...",
+    "concernsLabel": "¿Qué te preocupa o quisieras mejorar?",
+    "concernsPlaceholder": "Ej: Gasto mucho en restaurantes, no tengo disciplina para ahorrar, mis gastos fijos son muy altos...",
+    "aiContextLabel": "Cualquier otra cosa que el asistente deba saber",
+    "aiContextPlaceholder": "Ej: Tengo dos hijos, mi pareja también trabaja, recibo ingresos extras de freelance de vez en cuando...",
+    "unsavedChanges": "Tienes cambios sin guardar",
+    "saveProfile": "Guardar perfil",
+    "language": "Idioma",
+    "languageEs": "Español",
+    "languageEn": "English"
+  },
+  "reports": {
+    "title": "Reportes",
+    "subtitle": "Tendencias financieras y proyecciones",
+    "incomeVsExpenses": "Ingresos vs Gastos",
+    "noData": "Sin datos aún",
+    "income": "Ingresos",
+    "expenses": "Gastos",
+    "netBalanceTrend": "Tendencia de balance neto",
+    "monthlyIncomeTrend": "Tendencia de ingresos mensuales",
+    "noIncomeData": "Sin datos de ingresos aún",
+    "savingsOverview": "Resumen de ahorros",
+    "noSavings": "Sin fondos de ahorro aún",
+    "total": "Total",
+    "projection": "Proyección de ahorro a 12 meses",
+    "projectionSub": "Basado en tu balance neto promedio de los últimos 6 meses",
+    "projectionCurrent": "Ahorros actuales",
+    "projectionTarget": "Proyectado en 12 meses",
+    "projectionAvgNet": "Neto mensual prom.",
+    "projectionPositive": "Si mantienes este ritmo ahorrarás",
+    "projectionNegative": "Tu ritmo actual muestra un déficit de",
+    "projectionNoData": "Se necesitan más datos. Registra al menos un mes de ingresos y gastos.",
+    "analysis": "Análisis financiero IA",
+    "analysisSub": "Resumen y recomendaciones personalizadas basadas en tus datos",
+    "analysisRefresh": "Regenerar",
+    "analysisGenerate": "Generar análisis",
+    "analysisLoading": "Analizando tus finanzas...",
+    "analysisError": "No se pudo generar el análisis. Verifica que GROQ_API_KEY esté configurado.",
+    "analysisEmpty": "Haz clic en \"Generar análisis\" para obtener un reporte financiero personalizado.",
+    "analysisDate": "Generado el {{date}} a las {{time}}"
+  },
+  "categories": {
+    "names": {
+      "Housing": "Vivienda",
+      "Food": "Alimentación",
+      "Transport": "Transporte",
+      "Entertainment": "Entretenimiento",
+      "Utilities": "Servicios",
+      "Health": "Salud",
+      "Savings": "Ahorros",
+      "Education": "Educación",
+      "Shopping": "Compras",
+      "Other": "Otros"
+    }
+  },
+  "celebration": {
+    "goalReached": "¡Meta Alcanzada!",
+    "goalSubtitle": "¡Lograste completar esta meta financiera!",
+    "rewardUnlocked": "¡Recompensa Desbloqueada!",
+    "yourGift": "Tu regalo",
+    "continue": "¡Genial!"
+  }
+}

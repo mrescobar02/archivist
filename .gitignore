@@ -1,0 +1,48 @@
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads
+archivist-backend/uploads/
+
+# Node
+node_modules/
+dist/
+.DS_Store
+
+# Vite
+*.local
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Context / scratch files
+archivist-context/
+
+# Claude Code memory
+.claude/

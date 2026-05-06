@@ -1,0 +1,631 @@
+{
+  "app": {
+    "name": "The Archivist",
+    "tagline": "Household Finance",
+    "localOnly": "Local-only · No sync"
+  },
+  "nav": {
+    "overview": "Overview",
+    "fondos": "Funds",
+    "reminders": "Reminders",
+    "journal": "Journal",
+    "reports": "Reports",
+    "assistant": "AI Assistant",
+    "rewards": "Rewards",
+    "profile": "My Profile"
+  },
+  "fondos": {
+    "title": "Funds",
+    "subtitle": "Accounts, transfers, distribution and debts",
+    "savingsFunds": "Savings Funds",
+    "savingsGoals": "Goals & Savings",
+    "totalSavingsGoals": "Total Saved",
+    "noSavingsGoals": "No goals or funds yet.",
+    "contributionsFor": "Contributions — {{name}}",
+    "addContribution": "Add contribution",
+    "contributionHistory": "History",
+    "noContributions": "No contributions yet.",
+    "deleteFundTitle": "Delete fund",
+    "deleteFundConfirm": "Are you sure you want to delete \"{{name}}\"? All its contributions will also be deleted.",
+    "tabs": {
+      "accounts": "Accounts",
+      "transfers": "Transfers",
+      "distribution": "Distribution",
+      "debts": "Debts"
+    }
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "saveChanges": "Save Changes",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "loading": "Loading...",
+    "noData": "No data",
+    "amount": "Amount",
+    "date": "Date",
+    "description": "Description",
+    "category": "Category",
+    "account": "Account",
+    "type": "Type",
+    "name": "Name",
+    "all": "All",
+    "monthly": "Monthly",
+    "weekly": "Weekly",
+    "yearly": "Yearly",
+    "optional": "optional",
+    "selectCategory": "Select category",
+    "selectAccount": "Select account",
+    "fixed": "Fixed",
+    "variable": "Variable"
+  },
+  "overview": {
+    "title": "Overview",
+    "subtitle": "Your household financial summary",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "income": "Income",
+      "expenses": "Expenses"
+    },
+    "dashboard": {
+      "income": "Income",
+      "expenses": "Expenses",
+      "netBalance": "Net Balance",
+      "totalBalance": "Total Balance",
+      "totalSavings": "Total Savings",
+      "totalDebts": "Total Debts",
+      "recentTransactions": "Recent Transactions",
+      "noTransactions": "No transactions yet",
+      "upcomingPayments": "Upcoming Payments",
+      "noUpcomingPayments": "No upcoming payments",
+      "overdue": "Overdue",
+      "dueOn": "Due {{date}}",
+      "tooltips": {
+        "income": "Total income recorded this month across all accounts.",
+        "expenses": "Total variable and fixed expenses paid this month.",
+        "netBalance": "Income minus expenses this month. Positive means you saved money.",
+        "totalBalance": "Sum of all your account balances right now.",
+        "totalSavings": "Total amount accumulated across all your savings funds.",
+        "totalDebts": "Total remaining balance on all active debts."
+      }
+    },
+    "income": {
+      "records": "{{count}} records",
+      "addIncome": "Add Income",
+      "noIncome": "No income recorded yet.",
+      "source": "Source",
+      "egEmployer": "e.g. Employer name",
+      "editTitle": "Edit Income",
+      "addTitle": "Add Income"
+    },
+    "expenses": {
+      "count": "{{count}} expenses",
+      "scanReceipt": "Scan Receipt",
+      "addExpense": "Add Expense",
+      "noExpenses": "No expenses in this category.",
+      "noExpensesYet": "No expenses recorded yet.",
+      "editTitle": "Edit Expense",
+      "addTitle": "Add Expense",
+      "receiptScanned": "Expense added from receipt",
+      "scanFailed": "Failed to scan receipt",
+      "receiptPreviewTitle": "Receipt preview",
+      "receiptDetectedBadge": "AI detected",
+      "viewAll": "General",
+      "viewMonth": "By Month",
+      "noExpensesMonth": "No expenses this month."
+    }
+  },
+  "accounts": {
+    "title": "Accounts",
+    "subtitle": "Manage your financial accounts and transfers",
+    "tabs": {
+      "accounts": "Accounts",
+      "transfers": "Transfers"
+    },
+    "totalBalance": "Total Balance",
+    "addAccount": "Add Account",
+    "noAccounts": "No accounts yet. Add one to get started.",
+    "initialBalance": "Initial: {{amount}}",
+    "editTitle": "Edit Account",
+    "accountName": "Account Name",
+    "egChase": "e.g. Chase Checking",
+    "initialBalanceLabel": "Initial Balance",
+    "types": {
+      "checking": "Checking",
+      "savings": "Savings",
+      "cash": "Cash",
+      "investment": "Investment"
+    },
+    "transfers": {
+      "newTransfer": "New Transfer",
+      "fromAccount": "From Account",
+      "toAccount": "To Account",
+      "note": "Note (optional)",
+      "transferFunds": "Transfer Funds",
+      "history": "Transfer History",
+      "noTransfers": "No transfers yet.",
+      "from": "From",
+      "to": "To"
+    }
+  },
+  "goalsDebts": {
+    "title": "Goals & Debts",
+    "subtitle": "Track your financial goals and debt payoff progress",
+    "tabs": {
+      "goals": "Goals",
+      "debts": "Debts"
+    },
+    "goals": {
+      "count": "{{count}} goals",
+      "newGoal": "New Goal",
+      "noGoals": "No goals yet. Set your first financial goal.",
+      "target": "Target: {{date}}",
+      "achieved": "% achieved",
+      "editTitle": "Edit Goal",
+      "createTitle": "New Goal",
+      "icon": "Icon",
+      "goalName": "Goal Name",
+      "egEmergencyFund": "e.g. Emergency Fund",
+      "targetAmount": "Target Amount",
+      "currentAmount": "Current Amount",
+      "targetDate": "Target Date (optional)",
+      "createGoal": "Create Goal"
+    },
+    "debts": {
+      "paymentsFor": "Payments — {{name}}",
+      "logPayment": "Log Payment",
+      "history": "History",
+      "noPayments": "No payments yet.",
+      "totalRemaining": "Total Remaining",
+      "addDebt": "Add Debt",
+      "noDebts": "No debts tracked. Great!",
+      "remaining": "Remaining",
+      "minPayment": "Min Payment",
+      "interest": "Interest",
+      "pctPaid": "% paid",
+      "logPaymentAction": "Log payment",
+      "editTitle": "Edit Debt",
+      "addTitle": "Add Debt",
+      "debtName": "Debt Name",
+      "egCarLoan": "e.g. Car Loan",
+      "creditor": "Creditor",
+      "egBankName": "e.g. Bank Name",
+      "totalAmount": "Total Amount",
+      "remainingBalance": "Remaining Balance",
+      "interestRate": "Interest Rate (%)",
+      "minimumPayment": "Minimum Payment",
+      "cutDate": "Cut date",
+      "paymentDue": "Payment due",
+      "cutDateLabel": "Billing cut date (day)",
+      "paymentDueLabel": "Payment due day",
+      "dayPlaceholder": "e.g. 15",
+      "dayOfMonth": "{{day}} of month",
+      "billingCycle": "Billing cycle (optional)",
+      "createReminder": "Create reminder",
+      "paymentOf": "Payment —"
+    }
+  },
+  "budget": {
+    "title": "Budget",
+    "subtitle": "Allocate income and manage savings funds",
+    "tabs": {
+      "distribution": "Distribution",
+      "savings": "Savings Funds"
+    },
+    "distribution": {
+      "title": "Income Distribution",
+      "visualization": "Visualization",
+      "egCategory": "e.g. Tithe, Investments, Entertainment...",
+      "total": "Total: {{pct}}%",
+      "missing": "Missing {{pct}}%",
+      "exceeds": "Exceeds {{pct}}%",
+      "save": "Save Distribution",
+      "emptyChart": "Add categories to see the chart",
+      "comparison": "Budget vs Actual",
+      "comparisonSub": "How your spending tracks against the plan this month",
+      "budget": "Budget",
+      "actual": "Actual",
+      "remaining": "Left",
+      "over": "Over budget",
+      "noIncome": "Set a monthly income to see budget amounts.",
+      "unmatched": "Uncategorized expenses",
+      "noBudget": "No budget set"
+    },
+    "savings": {
+      "totalSavings": "Total Savings",
+      "newFund": "New Fund",
+      "noFunds": "No savings funds yet. Create one to start saving.",
+      "hide": "Hide",
+      "manage": "Manage",
+      "contributions": "contributions",
+      "addFundTitle": "New Savings Fund",
+      "fundName": "Fund Name",
+      "egEmergencyFund": "e.g. Emergency Fund",
+      "linkGoal": "Link to Goal (optional)",
+      "noGoal": "No goal",
+      "createFund": "Create Fund"
+    }
+  },
+  "reminders": {
+    "title": "Payment Reminders",
+    "subtitle": "Services & subscriptions — monthly total: {{total}}",
+    "addService": "Add service",
+    "overdue": "Overdue ({{count}})",
+    "overdueBy": "{{days}} days overdue",
+    "dueToday": "Due today",
+    "dueTomorrow": "Due tomorrow",
+    "dueInDays": "In {{days}} days",
+    "markPaid": "Mark paid",
+    "soon": "Next 7 days ({{count}})",
+    "paid": "Paid",
+    "later": "Next 30 days ({{count}})",
+    "allGood": "All caught up",
+    "noUpcoming": "No upcoming payments in the next 30 days.",
+    "addFirst": "Add first service",
+    "allActive": "All active services",
+    "renewal": "Renewal: {{date}}",
+    "lastPaid": "Last paid: {{date}}",
+    "inactive": "Inactive",
+    "reactivate": "Reactivate",
+    "editTitle": "Edit service",
+    "addTitle": "New service or subscription",
+    "serviceName": "Service name",
+    "egService": "e.g. Netflix, Insurance, Internet...",
+    "paymentDay": "Payment day",
+    "frequency": "Frequency",
+    "renewalDate": "Renewal date (optional)"
+  },
+  "journal": {
+    "title": "Financial Journal",
+    "subtitle": "Record how you feel, what worries you, or what you want to improve. Your advisor will take this into account.",
+    "newEntry": "New entry",
+    "empty": "Your journal is empty",
+    "emptyHint": "Write about something affecting you or that you want to change in your finances.",
+    "createFirst": "Create first entry",
+    "editTitle": "Edit entry",
+    "newTitle": "New journal entry",
+    "titleLabel": "Title",
+    "titlePlaceholder": "e.g. I spent more than planned this month...",
+    "howDoYouFeel": "How do you feel?",
+    "whatToRecord": "What do you want to record?",
+    "contentPlaceholder": "Write freely about your financial situation, what worries you, goals you want to reach, habits you want to change...",
+    "saveEntry": "Save entry",
+    "showLess": "Show less",
+    "showMore": "Show more",
+    "moods": {
+      "stressed": "Stressed",
+      "neutral": "Neutral",
+      "positive": "Positive"
+    },
+    "timeAgo": {
+      "minutes": "{{n}} min ago",
+      "hours": "{{n}}h ago",
+      "yesterday": "Yesterday",
+      "days": "{{n}} days ago"
+    }
+  },
+  "assistant": {
+    "history": {
+      "newChat": "New chat",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "empty": "No conversations yet",
+      "receiptTitle": "Receipt scan",
+      "receiptSent": "📷 Receipt sent"
+    },
+    "title": "AI Assistant",
+    "subtitle": "Financial advice and receipt scanning powered by AI",
+    "tabs": {
+      "chat": "AI Advisor",
+      "receipt": "Receipt Scanner"
+    },
+    "chat": {
+      "modes": {
+        "strict": "Strict",
+        "strictDesc": "Maximum rigor",
+        "moderate": "Moderate",
+        "moderateDesc": "Balanced approach",
+        "secondOpinion": "Second opinion",
+        "secondOpinionDesc": "Just inform me"
+      },
+      "suggestions": {
+        "general": "General suggestions",
+        "purchase": "Purchase decisions"
+      },
+      "generalPrompts": [
+        "How am I doing this month?",
+        "Should I prioritize savings or debt?",
+        "Analyze my spending patterns",
+        "How do I reach my goals faster?"
+      ],
+      "purchasePrompts": [
+        "Is this a good purchase?",
+        "I need this for work",
+        "Is there a cheaper alternative?",
+        "Can I afford this right now?"
+      ],
+      "advisorLabel": "Financial Advisor · {{mode}}",
+      "imageAttached": "attached",
+      "connectionError": "Could not connect to the advisor. Make sure GROQ_API_KEY is configured.",
+      "attachReceipt": "Attach receipt",
+      "purchasePlaceholder": "Describe what you want to buy and why...",
+      "generalPlaceholder": "Ask your financial advisor...",
+      "receiptAnalyzing": "Reading receipt...",
+      "receiptDetected": "Expense detected",
+      "receiptError": "Could not extract data from the image. Make sure it's a clear photo of a receipt.",
+      "receiptConfirm": "Add expense",
+      "receiptDiscard": "Discard",
+      "receiptSaved": "Expense saved successfully",
+      "receiptHint": "Send a receipt photo and I'll detect the expense details for you.",
+      "receiptNoData": "I couldn't identify a receipt in this image."
+    },
+    "receipt": {
+      "uploadLabel": "Upload receipt image",
+      "dragDrop": "Drag & drop or click to browse",
+      "fileTypes": "JPEG, PNG up to 10MB",
+      "analyzing": "Analyzing receipt...",
+      "analyzingHint": "Claude is extracting the details",
+      "extractedData": "Extracted Data",
+      "merchant": "Merchant",
+      "saveAsExpense": "Save as Expense",
+      "recentScans": "Recent Scans",
+      "noScans": "No scans yet. Upload a receipt to get started.",
+      "unknownMerchant": "Unknown merchant",
+      "noDate": "No date extracted"
+    }
+  },
+  "rewards": {
+    "title": "Rewards",
+    "subtitle": "{{earned}} of {{total}} achievements unlocked",
+    "enableSystem": "Enable system",
+    "disabled": "The rewards system is disabled. Enable it to start earning achievements.",
+    "earned": "Earned ({{count}})",
+    "pending": "To unlock ({{count}})",
+    "empty": "No rewards yet",
+    "emptyHint": "Keep improving your finances to unlock them!",
+    "loading": "Loading rewards...",
+    "progress": "Progress",
+    "gift": "Gift",
+    "earnedOn": "Earned on {{date}}",
+    "hiddenSection": "Hidden Achievements",
+    "hiddenSectionHint": "These achievements unlock through special actions. Explore the app to discover them.",
+    "hiddenHint": "This achievement unlocks through a special action within the app.",
+    "hiddenProgress": "Keep using the app to discover how to unlock it.",
+    "tiers": {
+      "bronze": "Bronze: {{earned}} / {{total}}",
+      "silver": "Silver: {{earned}} / {{total}}",
+      "gold": "Gold: {{earned}} / {{total}}"
+    },
+    "keys": {
+      "savings_500": {
+        "name": "First Step",
+        "description": "You saved your first $500.",
+        "gift": "A special dinner for two at your favorite restaurant."
+      },
+      "savings_2500": {
+        "name": "Solid Saver",
+        "description": "$2,500 saved — you've built a real foundation.",
+        "gift": "A spa day or massage — you deserve it."
+      },
+      "savings_5000": {
+        "name": "Firm Base",
+        "description": "Five thousand dollars in your reserve!",
+        "gift": "A family weekend getaway."
+      },
+      "savings_10000": {
+        "name": "Ten for Ten",
+        "description": "$10,000 saved — you're building real wealth.",
+        "gift": "A concert or special cultural event."
+      },
+      "savings_25000": {
+        "name": "Real Wealth",
+        "description": "$25,000 saved. You're on another level.",
+        "gift": "The international trip you've always dreamed of."
+      },
+      "emergency_25": {
+        "name": "Initial Shield",
+        "description": "Your emergency fund reached 25%.",
+        "gift": "A movie night at home with special food."
+      },
+      "emergency_50": {
+        "name": "Half Covered",
+        "description": "Emergency fund at 50% — you can breathe easier.",
+        "gift": "A day trip to a nearby destination."
+      },
+      "emergency_75": {
+        "name": "Almost Safe",
+        "description": "75% of your emergency fund is complete.",
+        "gift": "One night at a local boutique hotel."
+      },
+      "emergency_100": {
+        "name": "Fully Protected",
+        "description": "Emergency fund complete! You're unstoppable.",
+        "gift": "A well-deserved family vacation."
+      },
+      "goal_first": {
+        "name": "Visionary",
+        "description": "You created your first financial goal.",
+        "gift": "A personal finance book to keep learning."
+      },
+      "goal_50pct": {
+        "name": "In Motion",
+        "description": "One of your goals reached 50% progress.",
+        "gift": "A free afternoon dedicated to something you genuinely enjoy."
+      },
+      "goal_complete_1": {
+        "name": "Goal Achieved",
+        "description": "You completed your first financial goal!",
+        "gift": "You decide: celebrate this achievement as it deserves."
+      },
+      "goal_complete_3": {
+        "name": "Three for Three",
+        "description": "Three financial goals completed.",
+        "gift": "A premium experience — you choose what it's worth."
+      },
+      "debt_10pct": {
+        "name": "Attacking Debt",
+        "description": "You reduced your total debt by 10%.",
+        "gift": "A special coffee and a quiet morning to celebrate."
+      },
+      "debt_25pct": {
+        "name": "Breaking Chains",
+        "description": "25% less total debt!",
+        "gift": "A family dinner at your favorite restaurant."
+      },
+      "debt_50pct": {
+        "name": "Half Free",
+        "description": "You eliminated half of your original debt.",
+        "gift": "A family adventure weekend."
+      },
+      "debt_free": {
+        "name": "Totally Free",
+        "description": "You eliminated all your debt! You are free.",
+        "gift": "The trip you always wanted — guilt free."
+      },
+      "journal_1": {
+        "name": "First Reflection",
+        "description": "You wrote your first journal entry.",
+        "gift": "A moment of peace and your favorite drink."
+      },
+      "journal_5": {
+        "name": "Reflective",
+        "description": "5 entries in your financial journal.",
+        "gift": "A nice physical journal to accompany your journey."
+      },
+      "journal_10": {
+        "name": "Consistent",
+        "description": "10 entries — consistency is your superpower.",
+        "gift": "A financial coaching or mentoring session."
+      },
+      "surplus_1": {
+        "name": "Green Month",
+        "description": "Your first month closing with a positive balance.",
+        "gift": "Something small you've been wanting for a while."
+      },
+      "surplus_3": {
+        "name": "Winning Quarter",
+        "description": "3 consecutive months with a positive balance.",
+        "gift": "A special experience — movies, theater, or a concert."
+      },
+      "surplus_6": {
+        "name": "Unstoppable",
+        "description": "6 months in the green. You're an inspiration.",
+        "gift": "An investment in yourself: a course, trip, or experience."
+      },
+      "hidden_ask_before_buy": {
+        "name": "The One Who Asks Before Buying",
+        "description": "You consulted the assistant before making a purchase.",
+        "gift": "Financial wisdom: a podcast or book that changed lives."
+      },
+      "hidden_budget_chat": {
+        "name": "The Budget Architect",
+        "description": "You asked the assistant how to organize your budget.",
+        "gift": "A premium monthly budget spreadsheet."
+      },
+      "hidden_night_owl": {
+        "name": "The Finance Night Owl",
+        "description": "You were managing your finances after 10 PM.",
+        "gift": "Your favorite late-night drink — you earned it."
+      },
+      "hidden_monthly_5": {
+        "name": "The Obsessive Recorder",
+        "description": "You logged more than 5 transactions in a month.",
+        "gift": "A premium productivity app for one month."
+      },
+      "hidden_debt_and_goal": {
+        "name": "The Balancing Act",
+        "description": "You have an active debt and an active goal at the same time.",
+        "gift": "A notebook to plan your financial strategy."
+      },
+      "hidden_categories": {
+        "name": "The Category Explorer",
+        "description": "You logged expenses across 5 different categories.",
+        "gift": "An online personal finance course."
+      }
+    }
+  },
+  "profile": {
+    "title": "My Financial Profile",
+    "subtitle": "This information helps the assistant give you personalized advice.",
+    "sections": {
+      "basic": "Basic information",
+      "situation": "Current financial situation",
+      "goalsAndConcerns": "Goals and concerns",
+      "aiContext": "Additional context for the assistant"
+    },
+    "nameLabel": "What's your name?",
+    "namePlaceholder": "Your name",
+    "situationLabel": "How would you describe your current financial situation?",
+    "situationPlaceholder": "e.g. I work as an employee, I have a stable income but feel expenses always exceed what I earn...",
+    "riskTolerance": "Risk tolerance",
+    "riskLevels": {
+      "conservative": "Conservative — I prefer security over returns",
+      "moderate": "Moderate — balance between security and growth",
+      "aggressive": "Aggressive — I prioritize growth even with risk"
+    },
+    "goalsLabel": "What do you want to achieve with your finances?",
+    "goalsPlaceholder": "e.g. I want to save to buy a house in 3 years, eliminate credit card debt, and have a 6-month emergency fund...",
+    "concernsLabel": "What worries you or would you like to improve?",
+    "concernsPlaceholder": "e.g. I spend too much at restaurants, I lack discipline to save, my fixed expenses are too high...",
+    "aiContextLabel": "Anything else the assistant should know",
+    "aiContextPlaceholder": "e.g. I have two kids, my partner also works, I receive extra freelance income from time to time...",
+    "unsavedChanges": "You have unsaved changes",
+    "saveProfile": "Save profile",
+    "language": "Language",
+    "languageEs": "Español",
+    "languageEn": "English"
+  },
+  "reports": {
+    "title": "Reports",
+    "subtitle": "Financial trends and projections",
+    "incomeVsExpenses": "Income vs Expenses",
+    "noData": "No data yet",
+    "income": "Income",
+    "expenses": "Expenses",
+    "netBalanceTrend": "Net Balance Trend",
+    "monthlyIncomeTrend": "Monthly Income Trend",
+    "noIncomeData": "No income data yet",
+    "savingsOverview": "Savings Overview",
+    "noSavings": "No savings funds yet",
+    "total": "Total",
+    "projection": "12-Month Savings Projection",
+    "projectionSub": "Based on your average net balance over the last 6 months",
+    "projectionCurrent": "Current savings",
+    "projectionTarget": "Projected in 12 months",
+    "projectionAvgNet": "Avg. monthly net",
+    "projectionPositive": "If you maintain this pace you will save",
+    "projectionNegative": "Your current pace shows a deficit of",
+    "projectionNoData": "Not enough data to project. Record at least one month of income and expenses.",
+    "analysis": "AI Financial Analysis",
+    "analysisSub": "Personalized summary and recommendations based on your data",
+    "analysisRefresh": "Regenerate",
+    "analysisGenerate": "Generate analysis",
+    "analysisLoading": "Analyzing your finances...",
+    "analysisError": "Could not generate the analysis. Make sure GROQ_API_KEY is configured.",
+    "analysisEmpty": "Click \"Generate analysis\" to get a personalized financial report.",
+    "analysisDate": "Generated on {{date}} at {{time}}"
+  },
+  "categories": {
+    "names": {
+      "Housing": "Housing",
+      "Food": "Food",
+      "Transport": "Transport",
+      "Entertainment": "Entertainment",
+      "Utilities": "Utilities",
+      "Health": "Health",
+      "Savings": "Savings",
+      "Education": "Education",
+      "Shopping": "Shopping",
+      "Other": "Other"
+    }
+  },
+  "celebration": {
+    "goalReached": "Goal Reached!",
+    "goalSubtitle": "You've successfully completed this financial goal!",
+    "rewardUnlocked": "Reward Unlocked!",
+    "yourGift": "Your gift",
+    "continue": "Awesome!"
+  }
+}
