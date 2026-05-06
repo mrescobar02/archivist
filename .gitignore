@@ -21,7 +21,7 @@ env/
 *.sqlite3
 
 # Uploads
-archivist-backend/uploads/
+backend/uploads/
 
 # Node
 node_modules/
@@ -46,3 +46,4 @@ archivist-context/
 
 # Claude Code memory
 .claude/
+.vite/
