@@ -1,0 +1,53 @@
+Business Source License 1.1
+
+Parameters
+
+Licensor:
+Isaac Escobar
+
+Licensed Work:
+Archivist
+
+Additional Use Grant:
+
+You are permitted to copy, modify, and use this software for:
+
+- Personal use
+- Educational use
+- Internal business use
+- Evaluation and development purposes
+
+The following uses are prohibited without explicit written permission from the Licensor:
+
+- Offering the software as a hosted or managed service
+- Competing SaaS platforms or commercial derivatives
+- Reselling or sublicensing the software
+- Commercial redistribution
+- Multi-tenant production deployments for third parties
+- White-label offerings based on this software
+
+Organizations generating more than $1,000,000 USD annually in revenue must obtain a commercial license for production use.
+
+Change Date:
+2030-01-01
+
+Change License:
+Apache License, Version 2.0
+
+Terms
+
+The Licensed Work is licensed under the Business Source License 1.1 (the “License”).
+
+You may not use this file except in compliance with the License.
+
+The Licensor grants you the right to copy, modify, create derivative works, redistribute, and make non-production use of the Licensed Work, subject to the limitations described in this License and the Additional Use Grant.
+
+Production use for commercial SaaS offerings, hosting services, or competing products is prohibited unless explicitly authorized in writing by the Licensor.
+
+Any use of the Licensed Work in a commercial environment that directly generates revenue from software access, subscriptions, hosting, or platform usage requires a separate commercial agreement.
+
+Effective on the Change Date, or the fourth anniversary of the first public distribution of the Licensed Work under this License, whichever comes first, the Licensed Work shall become automatically available under the Change License.
+
+This License does not grant any rights to use the Licensor’s trademarks, branding, logos, or trade names.
+
+THE LICENSED WORK IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
