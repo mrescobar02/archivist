@@ -8,6 +8,7 @@ class CsvImport(SQLModel, table=True):
     __tablename__ = "csv_imports"
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: str = Field(index=True)
     filename: str
     status: CsvImportStatus = Field(default=CsvImportStatus.pending)
     total_rows: int = Field(default=0)

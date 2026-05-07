@@ -9,6 +9,7 @@ class Transfer(SQLModel, table=True):
     __tablename__ = "transfers"
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: str = Field(index=True)
     from_account_id: int = Field(foreign_key="accounts.id")
     to_account_id: int = Field(foreign_key="accounts.id")
     amount: Decimal = Field(sa_column=Column(Numeric(12, 2)))

@@ -5,6 +5,7 @@ import type {
   IncomeDistribution, CsvImport, ReceiptScan, DashboardSummary,
   UserProfile, JournalEntry, RewardsResponse, ChatConversation, ChatMessage
 } from '@/types'
+import { supabase } from '@/lib/supabase'
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -13,11 +14,31 @@ export const api = axios.create({
   timeout: 30000,
 })
 
+// Attach Supabase JWT to every request
+api.interceptors.request.use(async (config) => {
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session?.access_token) {
+    config.headers.Authorization = `Bearer ${session.access_token}`
+  }
+  return config
+})
+
 api.interceptors.response.use(
   res => res,
   err => {
+    const status = err.response?.status
     const msg = err.response?.data?.detail || err.message || 'Request failed'
-    return Promise.reject(new Error(Array.isArray(msg) ? msg.map((e: any) => e.msg).join(', ') : msg))
+    const message = Array.isArray(msg) ? msg.map((e: any) => e.msg).join(', ') : msg
+
+    if (status === 401) {
+      supabase.auth.signOut()
+      window.location.href = '/'
+    }
+
+    const error = new Error(message) as Error & { status?: number; isProRequired?: boolean }
+    error.status = status
+    error.isProRequired = status === 402
+    return Promise.reject(error)
   }
 )
 
@@ -182,8 +203,21 @@ export const listChatMessages = (conv_id: number) => api.get<ChatMessage[]>(`/ch
 export const addChatMessage = (conv_id: number, data: { role: string; content: string; kind?: string }) =>
   api.post<ChatMessage>(`/chat/conversations/${conv_id}/messages`, data).then(r => r.data)
 
+// ─── Billing ──────────────────────────────────────────────────────────────────
+export const createCheckout = () =>
+  api.post<{ checkout_url: string }>('/billing/checkout').then(r => r.data)
+export const createPortal = () =>
+  api.post<{ portal_url: string }>('/billing/portal').then(r => r.data)
+
 // ─── AI Advisor (SSE async generator) ────────────────────────────────────────
 export type AdvisorMode = 'strict' | 'moderate' | 'second_opinion'
+
+async function getAuthHeader(): Promise<Record<string, string>> {
+  const { data: { session } } = await supabase.auth.getSession()
+  return session?.access_token
+    ? { Authorization: `Bearer ${session.access_token}` }
+    : {}
+}
 
 export async function* streamAdvisor(opts: {
   message: string
@@ -192,9 +226,10 @@ export async function* streamAdvisor(opts: {
   imageMediaType?: string
   history?: { role: 'user' | 'assistant'; content: string }[]
 }): AsyncGenerator<string> {
+  const authHeader = await getAuthHeader()
   const response = await fetch(`${BASE_URL}/advisor`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeader },
     body: JSON.stringify({
       message: opts.message,
       advisor_mode: opts.mode ?? 'moderate',
@@ -205,7 +240,10 @@ export async function* streamAdvisor(opts: {
   })
   if (!response.ok) {
     const err = await response.json().catch(() => ({ detail: 'Unknown error' }))
-    throw new Error(err.detail || `HTTP ${response.status}`)
+    const error = new Error(err.detail || `HTTP ${response.status}`) as Error & { status?: number; isProRequired?: boolean }
+    error.status = response.status
+    error.isProRequired = response.status === 402
+    throw error
   }
   const reader = response.body?.getReader()
   if (!reader) throw new Error('No response body')
@@ -231,14 +269,18 @@ export async function* streamAdvisor(opts: {
 }
 
 export async function* streamReportAnalysis(): AsyncGenerator<string> {
+  const authHeader = await getAuthHeader()
   const response = await fetch(`${BASE_URL}/advisor/report`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeader },
     body: JSON.stringify({}),
   })
   if (!response.ok) {
     const err = await response.json().catch(() => ({ detail: 'Unknown error' }))
-    throw new Error(err.detail || `HTTP ${response.status}`)
+    const error = new Error(err.detail || `HTTP ${response.status}`) as Error & { status?: number; isProRequired?: boolean }
+    error.status = response.status
+    error.isProRequired = response.status === 402
+    throw error
   }
   const reader = response.body?.getReader()
   if (!reader) throw new Error('No response body')
@@ -264,16 +306,17 @@ export async function* streamReportAnalysis(): AsyncGenerator<string> {
 }
 
 export async function getSavedAnalysis(): Promise<{ text: string; created_at: string } | null> {
-  const res = await fetch(`${BASE_URL}/advisor/report/saved`)
+  const authHeader = await getAuthHeader()
+  const res = await fetch(`${BASE_URL}/advisor/report/saved`, { headers: authHeader })
   if (!res.ok) return null
-  const data = await res.json()
-  return data  // null when no analysis saved yet
+  return res.json()
 }
 
 export async function saveAnalysis(text: string): Promise<{ id: number; created_at: string }> {
+  const authHeader = await getAuthHeader()
   const res = await fetch(`${BASE_URL}/advisor/report/save`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeader },
     body: JSON.stringify({ text }),
   })
   if (!res.ok) throw new Error('Failed to save analysis')

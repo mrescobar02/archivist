@@ -1,3 +1,4 @@
+import calendar
 from datetime import date
 from decimal import Decimal
 from typing import Dict, Any
@@ -15,61 +16,89 @@ from ..models.reward import UserReward
 from .rewards import REWARD_MAP, compute_metrics, progress_pct
 
 
-def build_context(session: Session) -> Dict[str, Any]:
+def _month_bounds(year: int, month: int):
+    _, last = calendar.monthrange(year, month)
+    return date(year, month, 1), date(year, month, last)
+
+
+def build_context(session: Session, user_id: str) -> Dict[str, Any]:
     today = date.today()
     year, month = today.year, today.month
+    start, end = _month_bounds(year, month)
 
-    total_balance = session.exec(select(func.sum(Account.balance))).first() or Decimal("0.00")
+    total_balance = session.exec(
+        select(func.sum(Account.balance)).where(Account.user_id == user_id)
+    ).first() or Decimal("0.00")
+
     monthly_income = session.exec(
         select(func.sum(Income.amount)).where(
-            func.strftime('%Y', Income.date) == str(year),
-            func.strftime('%m', Income.date) == f"{month:02d}"
+            Income.user_id == user_id,
+            Income.date >= start,
+            Income.date <= end,
         )
     ).first() or Decimal("0.00")
+
     monthly_expenses = session.exec(
         select(func.sum(Expense.amount)).where(
-            func.strftime('%Y', Expense.date) == str(year),
-            func.strftime('%m', Expense.date) == f"{month:02d}"
+            Expense.user_id == user_id,
+            Expense.date >= start,
+            Expense.date <= end,
         )
     ).first() or Decimal("0.00")
-    savings_total = session.exec(select(func.sum(SavingsFund.amount))).first() or Decimal("0.00")
-    debts_total = session.exec(select(func.sum(Debt.remaining_balance))).first() or Decimal("0.00")
+
+    savings_total = session.exec(
+        select(func.sum(SavingsFund.amount)).where(SavingsFund.user_id == user_id)
+    ).first() or Decimal("0.00")
+
+    debts_total = session.exec(
+        select(func.sum(Debt.remaining_balance)).where(Debt.user_id == user_id)
+    ).first() or Decimal("0.00")
 
     accounts = [
         {"name": a.name, "type": str(a.type), "balance": float(a.balance)}
-        for a in session.exec(select(Account)).all()
+        for a in session.exec(select(Account).where(Account.user_id == user_id)).all()
     ]
     goals = [
         {"name": g.name, "target": float(g.target_amount), "current": float(g.current_amount)}
-        for g in session.exec(select(Goal)).all()
+        for g in session.exec(select(Goal).where(Goal.user_id == user_id)).all()
     ]
 
     top_categories = []
-    for cat in session.exec(select(Category)).all():
+    for cat in session.exec(select(Category).where(Category.user_id == user_id)).all():
         total = session.exec(
             select(func.sum(Expense.amount)).where(
+                Expense.user_id == user_id,
                 Expense.category_id == cat.id,
-                func.strftime('%Y', Expense.date) == str(year),
-                func.strftime('%m', Expense.date) == f"{month:02d}"
+                Expense.date >= start,
+                Expense.date <= end,
             )
         ).first() or Decimal("0.00")
         if total > 0:
             top_categories.append({"name": cat.name, "amount": float(total)})
     top_categories.sort(key=lambda x: x["amount"], reverse=True)
 
-    profile = session.get(UserProfile, 1)
+    profile = session.exec(
+        select(UserProfile).where(UserProfile.user_id == user_id)
+    ).first()
+
     recent_entries = session.exec(
-        select(JournalEntry).order_by(JournalEntry.created_at.desc()).limit(5)
+        select(JournalEntry)
+        .where(JournalEntry.user_id == user_id)
+        .order_by(JournalEntry.created_at.desc())
+        .limit(5)
     ).all()
     journal_entries = [
         {"title": e.title, "mood": e.mood, "content": e.content[:300]}
         for e in recent_entries
     ]
 
-    # Rewards context
     rewards_enabled = profile.rewards_enabled if profile else True
-    earned_keys = {r.reward_key for r in session.exec(select(UserReward)).all()}
-    metrics = compute_metrics(session)
+    earned_keys = {
+        r.reward_key for r in session.exec(
+            select(UserReward).where(UserReward.user_id == user_id)
+        ).all()
+    }
+    metrics = compute_metrics(session, user_id)
     earned_rewards = []
     pending_rewards = []
     for key, r in REWARD_MAP.items():
@@ -83,7 +112,6 @@ def build_context(session: Session) -> Dict[str, Any]:
                 "gift": r["gift"],
                 "progress_pct": round(pct, 1),
             })
-    # Show only top 5 closest pending (highest progress)
     pending_rewards.sort(key=lambda x: x["progress_pct"], reverse=True)
 
     return {

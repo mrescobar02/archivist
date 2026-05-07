@@ -10,6 +10,7 @@ class FixedExpense(SQLModel, table=True):
     __tablename__ = "fixed_expenses"
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: str = Field(index=True)
     name: str
     amount: Decimal = Field(sa_column=Column(Numeric(12, 2)))
     category_id: Optional[int] = Field(default=None, foreign_key="categories.id")

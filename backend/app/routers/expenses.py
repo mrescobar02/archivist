@@ -3,6 +3,7 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 from ..db.session import get_session
+from ..core.auth import get_current_user, CurrentUser
 from ..models.account import Account
 from ..models.expense import Expense
 from ..models.enums import ExpenseType
@@ -19,8 +20,9 @@ def list_expenses(
     start_date: Optional[date] = Query(None),
     end_date: Optional[date] = Query(None),
     session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
 ):
-    q = select(Expense)
+    q = select(Expense).where(Expense.user_id == current_user.user_id)
     if account_id:
         q = q.where(Expense.account_id == account_id)
     if category_id:
@@ -35,11 +37,17 @@ def list_expenses(
 
 
 @router.post("", response_model=ExpenseRead, status_code=201)
-def create_expense(body: ExpenseCreate, session: Session = Depends(get_session)):
-    account = session.get(Account, body.account_id)
+def create_expense(
+    body: ExpenseCreate,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    account = session.exec(
+        select(Account).where(Account.id == body.account_id, Account.user_id == current_user.user_id)
+    ).first()
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
-    expense = Expense(**body.model_dump())
+    expense = Expense(user_id=current_user.user_id, **body.model_dump())
     account.balance -= body.amount
     session.add(expense)
     session.add(account)
@@ -49,19 +57,30 @@ def create_expense(body: ExpenseCreate, session: Session = Depends(get_session))
 
 
 @router.put("/{expense_id}", response_model=ExpenseRead)
-def update_expense(expense_id: int, body: ExpenseUpdate, session: Session = Depends(get_session)):
-    expense = session.get(Expense, expense_id)
+def update_expense(
+    expense_id: int,
+    body: ExpenseUpdate,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    expense = session.exec(
+        select(Expense).where(Expense.id == expense_id, Expense.user_id == current_user.user_id)
+    ).first()
     if not expense:
         raise HTTPException(status_code=404, detail="Expense not found")
     old_amount = expense.amount
     old_account_id = expense.account_id
     for field, value in body.model_dump(exclude_unset=True).items():
         setattr(expense, field, value)
-    old_account = session.get(Account, old_account_id)
+    old_account = session.exec(
+        select(Account).where(Account.id == old_account_id, Account.user_id == current_user.user_id)
+    ).first()
     if old_account:
         old_account.balance += old_amount
         session.add(old_account)
-    new_account = session.get(Account, expense.account_id)
+    new_account = session.exec(
+        select(Account).where(Account.id == expense.account_id, Account.user_id == current_user.user_id)
+    ).first()
     if new_account:
         new_account.balance -= expense.amount
         session.add(new_account)
@@ -72,11 +91,19 @@ def update_expense(expense_id: int, body: ExpenseUpdate, session: Session = Depe
 
 
 @router.delete("/{expense_id}", status_code=204)
-def delete_expense(expense_id: int, session: Session = Depends(get_session)):
-    expense = session.get(Expense, expense_id)
+def delete_expense(
+    expense_id: int,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    expense = session.exec(
+        select(Expense).where(Expense.id == expense_id, Expense.user_id == current_user.user_id)
+    ).first()
     if not expense:
         raise HTTPException(status_code=404, detail="Expense not found")
-    account = session.get(Account, expense.account_id)
+    account = session.exec(
+        select(Account).where(Account.id == expense.account_id, Account.user_id == current_user.user_id)
+    ).first()
     if account:
         account.balance += expense.amount
         session.add(account)

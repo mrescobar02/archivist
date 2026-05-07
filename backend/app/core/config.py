@@ -15,6 +15,13 @@ class Settings(BaseSettings):
     CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
     UPLOAD_DIR: str = "./uploads/receipts"
 
+    SUPABASE_URL: str = ""           # e.g. https://xxx.supabase.co
+    SUPABASE_JWT_SECRET: str = ""    # legacy HS256 fallback (optional)
+
+    STRIPE_SECRET_KEY: str = ""
+    STRIPE_WEBHOOK_SECRET: str = ""
+    STRIPE_PRO_PRICE_ID: str = ""
+
     @property
     def cors_origins_list(self) -> List[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",")]

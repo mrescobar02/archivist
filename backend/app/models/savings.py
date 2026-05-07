@@ -9,6 +9,7 @@ class SavingsFund(SQLModel, table=True):
     __tablename__ = "savings_funds"
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: str = Field(index=True)
     name: str
     amount: Decimal = Field(default=Decimal("0.00"), sa_column=Column(Numeric(12, 2)))
     goal_id: Optional[int] = Field(default=None, foreign_key="goals.id")

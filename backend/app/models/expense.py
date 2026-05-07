@@ -10,6 +10,7 @@ class Expense(SQLModel, table=True):
     __tablename__ = "expenses"
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: str = Field(index=True)
     amount: Decimal = Field(sa_column=Column(Numeric(12, 2)))
     date: date
     category_id: Optional[int] = Field(default=None, foreign_key="categories.id")

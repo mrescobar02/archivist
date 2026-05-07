@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: archivist-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      # Set these in the Render dashboard (do NOT commit real values here):
+      # DATABASE_URL     — Supabase Session Pooler URL (postgresql+psycopg2://...)
+      # GROQ_API_KEY     — From console.groq.com
+      # SUPABASE_URL     — https://PROJECT_REF.supabase.co
+      # CORS_ORIGINS     — https://your-app.vercel.app
+      # STRIPE_SECRET_KEY       — optional, leave empty for beta mode
+      # STRIPE_WEBHOOK_SECRET   — optional
+      # STRIPE_PRO_PRICE_ID     — optional

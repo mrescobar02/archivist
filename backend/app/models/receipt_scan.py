@@ -10,6 +10,7 @@ class ReceiptScan(SQLModel, table=True):
     __tablename__ = "receipt_scans"
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: str = Field(index=True)
     image_path: str = Field(default="")
     merchant: Optional[str] = Field(default=None, sa_column=Column(String, nullable=True))
     amount: Optional[Decimal] = Field(default=None, sa_column=Column(Numeric(12, 2), nullable=True))

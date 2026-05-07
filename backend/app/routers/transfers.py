@@ -2,6 +2,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 from ..db.session import get_session
+from ..core.auth import get_current_user, CurrentUser
 from ..models.account import Account
 from ..models.transfer import Transfer
 from ..schemas.transfer import TransferCreate, TransferRead
@@ -13,8 +14,9 @@ router = APIRouter(prefix="/transfers", tags=["transfers"])
 def list_transfers(
     account_id: Optional[int] = Query(None),
     session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
 ):
-    q = select(Transfer)
+    q = select(Transfer).where(Transfer.user_id == current_user.user_id)
     if account_id:
         q = q.where(
             (Transfer.from_account_id == account_id) | (Transfer.to_account_id == account_id)
@@ -23,18 +25,26 @@ def list_transfers(
 
 
 @router.post("", response_model=TransferRead, status_code=201)
-def create_transfer(body: TransferCreate, session: Session = Depends(get_session)):
+def create_transfer(
+    body: TransferCreate,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
     if body.from_account_id == body.to_account_id:
         raise HTTPException(status_code=422, detail="Source and destination accounts must be different")
-    from_acc = session.get(Account, body.from_account_id)
-    to_acc = session.get(Account, body.to_account_id)
+    from_acc = session.exec(
+        select(Account).where(Account.id == body.from_account_id, Account.user_id == current_user.user_id)
+    ).first()
+    to_acc = session.exec(
+        select(Account).where(Account.id == body.to_account_id, Account.user_id == current_user.user_id)
+    ).first()
     if not from_acc:
         raise HTTPException(status_code=404, detail="Source account not found")
     if not to_acc:
         raise HTTPException(status_code=404, detail="Destination account not found")
     from_acc.balance -= body.amount
     to_acc.balance += body.amount
-    transfer = Transfer(**body.model_dump())
+    transfer = Transfer(user_id=current_user.user_id, **body.model_dump())
     session.add(from_acc)
     session.add(to_acc)
     session.add(transfer)
@@ -44,12 +54,22 @@ def create_transfer(body: TransferCreate, session: Session = Depends(get_session
 
 
 @router.delete("/{transfer_id}", status_code=204)
-def delete_transfer(transfer_id: int, session: Session = Depends(get_session)):
-    transfer = session.get(Transfer, transfer_id)
+def delete_transfer(
+    transfer_id: int,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    transfer = session.exec(
+        select(Transfer).where(Transfer.id == transfer_id, Transfer.user_id == current_user.user_id)
+    ).first()
     if not transfer:
         raise HTTPException(status_code=404, detail="Transfer not found")
-    from_acc = session.get(Account, transfer.from_account_id)
-    to_acc = session.get(Account, transfer.to_account_id)
+    from_acc = session.exec(
+        select(Account).where(Account.id == transfer.from_account_id, Account.user_id == current_user.user_id)
+    ).first()
+    to_acc = session.exec(
+        select(Account).where(Account.id == transfer.to_account_id, Account.user_id == current_user.user_id)
+    ).first()
     if from_acc:
         from_acc.balance += transfer.amount
         session.add(from_acc)

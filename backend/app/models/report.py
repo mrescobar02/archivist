@@ -6,6 +6,8 @@ from sqlalchemy import Column, Text
 
 class FinancialAnalysis(SQLModel, table=True):
     __tablename__ = "financial_analyses"
+
     id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: str = Field(index=True)
     text: str = Field(sa_column=Column(Text))
     created_at: datetime = Field(default_factory=datetime.utcnow)

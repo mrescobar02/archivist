@@ -9,6 +9,8 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from pydantic import BaseModel as PydanticBaseModel
 from sqlmodel import Session, select
 from ..db.session import get_session
+from ..core.auth import get_current_user, CurrentUser
+from ..core.billing import require_pro
 from ..models.receipt_scan import ReceiptScan
 from ..models.expense import Expense
 from ..models.account import Account
@@ -27,7 +29,11 @@ class AnalyzeBase64Request(PydanticBaseModel):
 
 
 @router.post("/analyze")
-def analyze_receipt_base64(body: AnalyzeBase64Request, session: Session = Depends(get_session)):
+def analyze_receipt_base64(
+    body: AnalyzeBase64Request,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(require_pro),
+):
     if not get_client():
         raise HTTPException(status_code=503, detail="AI features not configured — set GROQ_API_KEY")
     try:
@@ -41,17 +47,19 @@ def analyze_receipt_base64(body: AnalyzeBase64Request, session: Session = Depend
         logger.error(f"Receipt analysis failed: {e}")
         raise HTTPException(status_code=422, detail=str(e))
 
+
 ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp"}
-MAX_SIZE_BYTES = 10 * 1024 * 1024  # 10MB
+MAX_SIZE_BYTES = 10 * 1024 * 1024
 
 
 @router.post("/scan", response_model=ReceiptScanRead, status_code=201)
 async def scan_receipt(
     image: UploadFile = File(...),
     session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(require_pro),
 ):
     if not get_client():
-        raise HTTPException(status_code=503, detail="AI features not configured — set ANTHROPIC_API_KEY")
+        raise HTTPException(status_code=503, detail="AI features not configured — set GROQ_API_KEY")
 
     content_type = image.content_type or ""
     if content_type not in ALLOWED_CONTENT_TYPES:
@@ -69,7 +77,7 @@ async def scan_receipt(
     with open(filepath, "wb") as f:
         f.write(image_bytes)
 
-    scan = ReceiptScan(image_path=filepath, status="pending")
+    scan = ReceiptScan(user_id=current_user.user_id, image_path=filepath, status="pending")
     session.add(scan)
     session.commit()
     session.refresh(scan)
@@ -94,13 +102,28 @@ async def scan_receipt(
 
 
 @router.get("/scans", response_model=List[ReceiptScanRead])
-def list_scans(session: Session = Depends(get_session)):
-    return session.exec(select(ReceiptScan).order_by(ReceiptScan.created_at.desc()).limit(50)).all()
+def list_scans(
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    return session.exec(
+        select(ReceiptScan)
+        .where(ReceiptScan.user_id == current_user.user_id)
+        .order_by(ReceiptScan.created_at.desc())
+        .limit(50)
+    ).all()
 
 
 @router.put("/scans/{scan_id}", response_model=ReceiptScanRead)
-def update_scan(scan_id: int, body: ReceiptScanUpdate, session: Session = Depends(get_session)):
-    scan = session.get(ReceiptScan, scan_id)
+def update_scan(
+    scan_id: int,
+    body: ReceiptScanUpdate,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    scan = session.exec(
+        select(ReceiptScan).where(ReceiptScan.id == scan_id, ReceiptScan.user_id == current_user.user_id)
+    ).first()
     if not scan:
         raise HTTPException(status_code=404, detail="Receipt scan not found")
     for field, value in body.model_dump(exclude_unset=True).items():
@@ -113,16 +136,26 @@ def update_scan(scan_id: int, body: ReceiptScanUpdate, session: Session = Depend
 
 
 @router.post("/scans/{scan_id}/save", response_model=ReceiptScanRead)
-def save_scan_as_expense(scan_id: int, body: ReceiptScanSave, session: Session = Depends(get_session)):
-    scan = session.get(ReceiptScan, scan_id)
+def save_scan_as_expense(
+    scan_id: int,
+    body: ReceiptScanSave,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    scan = session.exec(
+        select(ReceiptScan).where(ReceiptScan.id == scan_id, ReceiptScan.user_id == current_user.user_id)
+    ).first()
     if not scan:
         raise HTTPException(status_code=404, detail="Receipt scan not found")
     if not scan.amount or not scan.date:
         raise HTTPException(status_code=400, detail="Amount and date are required before saving")
-    account = session.get(Account, body.account_id)
+    account = session.exec(
+        select(Account).where(Account.id == body.account_id, Account.user_id == current_user.user_id)
+    ).first()
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
     expense = Expense(
+        user_id=current_user.user_id,
         amount=scan.amount,
         date=scan.date,
         category_id=scan.category_id,
@@ -141,8 +174,14 @@ def save_scan_as_expense(scan_id: int, body: ReceiptScanSave, session: Session =
 
 
 @router.delete("/scans/{scan_id}", status_code=204)
-def delete_scan(scan_id: int, session: Session = Depends(get_session)):
-    scan = session.get(ReceiptScan, scan_id)
+def delete_scan(
+    scan_id: int,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    scan = session.exec(
+        select(ReceiptScan).where(ReceiptScan.id == scan_id, ReceiptScan.user_id == current_user.user_id)
+    ).first()
     if not scan:
         raise HTTPException(status_code=404, detail="Receipt scan not found")
     if scan.image_path and os.path.exists(scan.image_path):

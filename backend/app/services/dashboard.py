@@ -1,3 +1,4 @@
+import calendar
 from datetime import date
 from decimal import Decimal
 from typing import List
@@ -12,30 +13,52 @@ from ..schemas.dashboard import DashboardSummary, RecentTransaction, UpcomingPay
 from .fixed_expenses import compute_next_due_date
 
 
-def get_dashboard_summary(session: Session) -> DashboardSummary:
+def _month_bounds(year: int, month: int):
+    _, last = calendar.monthrange(year, month)
+    return date(year, month, 1), date(year, month, last)
+
+
+def get_dashboard_summary(session: Session, user_id: str) -> DashboardSummary:
     today = date.today()
     year, month = today.year, today.month
+    start, end = _month_bounds(year, month)
 
-    total_balance = session.exec(select(func.sum(Account.balance))).first() or Decimal("0.00")
+    total_balance = session.exec(
+        select(func.sum(Account.balance)).where(Account.user_id == user_id)
+    ).first() or Decimal("0.00")
+
     monthly_income = session.exec(
         select(func.sum(Income.amount)).where(
-            func.strftime('%Y', Income.date) == str(year),
-            func.strftime('%m', Income.date) == f"{month:02d}"
+            Income.user_id == user_id,
+            Income.date >= start,
+            Income.date <= end,
         )
     ).first() or Decimal("0.00")
+
     monthly_expenses = session.exec(
         select(func.sum(Expense.amount)).where(
-            func.strftime('%Y', Expense.date) == str(year),
-            func.strftime('%m', Expense.date) == f"{month:02d}"
+            Expense.user_id == user_id,
+            Expense.date >= start,
+            Expense.date <= end,
         )
     ).first() or Decimal("0.00")
 
     monthly_net = Decimal(str(monthly_income)) - Decimal(str(monthly_expenses))
-    savings_total = session.exec(select(func.sum(SavingsFund.amount))).first() or Decimal("0.00")
-    debts_total = session.exec(select(func.sum(Debt.remaining_balance))).first() or Decimal("0.00")
 
-    incomes = session.exec(select(Income).order_by(Income.date.desc()).limit(10)).all()
-    expenses = session.exec(select(Expense).order_by(Expense.date.desc()).limit(10)).all()
+    savings_total = session.exec(
+        select(func.sum(SavingsFund.amount)).where(SavingsFund.user_id == user_id)
+    ).first() or Decimal("0.00")
+
+    debts_total = session.exec(
+        select(func.sum(Debt.remaining_balance)).where(Debt.user_id == user_id)
+    ).first() or Decimal("0.00")
+
+    incomes = session.exec(
+        select(Income).where(Income.user_id == user_id).order_by(Income.date.desc()).limit(10)
+    ).all()
+    expenses = session.exec(
+        select(Expense).where(Expense.user_id == user_id).order_by(Expense.date.desc()).limit(10)
+    ).all()
 
     transactions: List[RecentTransaction] = []
     for inc in incomes:
@@ -54,7 +77,12 @@ def get_dashboard_summary(session: Session) -> DashboardSummary:
     transactions.sort(key=lambda t: t.date, reverse=True)
     transactions = transactions[:10]
 
-    fixed_expenses = session.exec(select(FixedExpense).where(FixedExpense.is_active == True)).all()
+    fixed_expenses = session.exec(
+        select(FixedExpense).where(
+            FixedExpense.user_id == user_id,
+            FixedExpense.is_active == True,
+        )
+    ).all()
     upcoming: List[UpcomingPayment] = []
     overdue: List[UpcomingPayment] = []
 

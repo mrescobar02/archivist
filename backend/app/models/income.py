@@ -9,6 +9,7 @@ class Income(SQLModel, table=True):
     __tablename__ = "incomes"
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: str = Field(index=True)
     amount: Decimal = Field(sa_column=Column(Numeric(12, 2)))
     date: date
     type: str = Field(default="salary")

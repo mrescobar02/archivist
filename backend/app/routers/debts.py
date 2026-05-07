@@ -3,6 +3,7 @@ from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 from ..db.session import get_session
+from ..core.auth import get_current_user, CurrentUser
 from ..models.debt import Debt, DebtPayment
 from ..schemas.debt import DebtCreate, DebtUpdate, DebtRead, DebtPaymentCreate, DebtPaymentRead
 
@@ -10,13 +11,22 @@ router = APIRouter(prefix="/debts", tags=["debts"])
 
 
 @router.get("", response_model=List[DebtRead])
-def list_debts(session: Session = Depends(get_session)):
-    return session.exec(select(Debt).order_by(Debt.name)).all()
+def list_debts(
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    return session.exec(
+        select(Debt).where(Debt.user_id == current_user.user_id).order_by(Debt.name)
+    ).all()
 
 
 @router.post("", response_model=DebtRead, status_code=201)
-def create_debt(body: DebtCreate, session: Session = Depends(get_session)):
-    debt = Debt(**body.model_dump())
+def create_debt(
+    body: DebtCreate,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    debt = Debt(user_id=current_user.user_id, **body.model_dump())
     session.add(debt)
     session.commit()
     session.refresh(debt)
@@ -24,16 +34,29 @@ def create_debt(body: DebtCreate, session: Session = Depends(get_session)):
 
 
 @router.get("/{debt_id}", response_model=DebtRead)
-def get_debt(debt_id: int, session: Session = Depends(get_session)):
-    debt = session.get(Debt, debt_id)
+def get_debt(
+    debt_id: int,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    debt = session.exec(
+        select(Debt).where(Debt.id == debt_id, Debt.user_id == current_user.user_id)
+    ).first()
     if not debt:
         raise HTTPException(status_code=404, detail="Debt not found")
     return debt
 
 
 @router.put("/{debt_id}", response_model=DebtRead)
-def update_debt(debt_id: int, body: DebtUpdate, session: Session = Depends(get_session)):
-    debt = session.get(Debt, debt_id)
+def update_debt(
+    debt_id: int,
+    body: DebtUpdate,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    debt = session.exec(
+        select(Debt).where(Debt.id == debt_id, Debt.user_id == current_user.user_id)
+    ).first()
     if not debt:
         raise HTTPException(status_code=404, detail="Debt not found")
     for field, value in body.model_dump(exclude_unset=True).items():
@@ -45,8 +68,14 @@ def update_debt(debt_id: int, body: DebtUpdate, session: Session = Depends(get_s
 
 
 @router.delete("/{debt_id}", status_code=204)
-def delete_debt(debt_id: int, session: Session = Depends(get_session)):
-    debt = session.get(Debt, debt_id)
+def delete_debt(
+    debt_id: int,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    debt = session.exec(
+        select(Debt).where(Debt.id == debt_id, Debt.user_id == current_user.user_id)
+    ).first()
     if not debt:
         raise HTTPException(status_code=404, detail="Debt not found")
     has_payments = session.exec(select(DebtPayment).where(DebtPayment.debt_id == debt_id)).first()
@@ -57,15 +86,31 @@ def delete_debt(debt_id: int, session: Session = Depends(get_session)):
 
 
 @router.get("/{debt_id}/payments", response_model=List[DebtPaymentRead])
-def list_payments(debt_id: int, session: Session = Depends(get_session)):
+def list_payments(
+    debt_id: int,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    debt = session.exec(
+        select(Debt).where(Debt.id == debt_id, Debt.user_id == current_user.user_id)
+    ).first()
+    if not debt:
+        raise HTTPException(status_code=404, detail="Debt not found")
     return session.exec(
         select(DebtPayment).where(DebtPayment.debt_id == debt_id).order_by(DebtPayment.date.desc())
     ).all()
 
 
 @router.post("/{debt_id}/payments", response_model=DebtPaymentRead, status_code=201)
-def create_payment(debt_id: int, body: DebtPaymentCreate, session: Session = Depends(get_session)):
-    debt = session.get(Debt, debt_id)
+def create_payment(
+    debt_id: int,
+    body: DebtPaymentCreate,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    debt = session.exec(
+        select(Debt).where(Debt.id == debt_id, Debt.user_id == current_user.user_id)
+    ).first()
     if not debt:
         raise HTTPException(status_code=404, detail="Debt not found")
     payment = DebtPayment(debt_id=debt_id, **body.model_dump())
@@ -78,13 +123,21 @@ def create_payment(debt_id: int, body: DebtPaymentCreate, session: Session = Dep
 
 
 @router.delete("/{debt_id}/payments/{payment_id}", status_code=204)
-def delete_payment(debt_id: int, payment_id: int, session: Session = Depends(get_session)):
+def delete_payment(
+    debt_id: int,
+    payment_id: int,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    debt = session.exec(
+        select(Debt).where(Debt.id == debt_id, Debt.user_id == current_user.user_id)
+    ).first()
+    if not debt:
+        raise HTTPException(status_code=404, detail="Debt not found")
     payment = session.get(DebtPayment, payment_id)
     if not payment or payment.debt_id != debt_id:
         raise HTTPException(status_code=404, detail="Payment not found")
-    debt = session.get(Debt, debt_id)
-    if debt:
-        debt.remaining_balance += payment.amount
-        session.add(debt)
+    debt.remaining_balance += payment.amount
+    session.add(debt)
     session.delete(payment)
     session.commit()

@@ -1,4 +1,5 @@
-from datetime import datetime, date
+import calendar
+from datetime import datetime, date as Date
 from typing import Any, Dict, List
 from sqlmodel import Session, select, func
 from ..models.reward import UserReward
@@ -10,12 +11,11 @@ from ..models.income import Income
 from ..models.expense import Expense
 from ..models.journal import JournalEntry
 
-# ──────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
 # Reward catalog
-# ──────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
 
 REWARDS: List[Dict[str, Any]] = [
-    # Savings total milestones
     dict(key="savings_500",      name="Primer Paso",        tier="bronze", icon="🥗",
          description="Lograste acumular $500 en ahorros.",
          gift="Una cena especial para dos en tu restaurante favorito.",
@@ -36,8 +36,6 @@ REWARDS: List[Dict[str, Any]] = [
          description="$25,000 ahorrados. Estás en otro nivel.",
          gift="El viaje internacional que siempre soñaste.",
          condition="savings_total", threshold=25000),
-
-    # Emergency fund
     dict(key="emergency_25",     name="Escudo Inicial",      tier="bronze", icon="🛡️",
          description="Tu fondo de emergencia llegó al 25%.",
          gift="Una noche de cine en casa con comida especial.",
@@ -54,8 +52,6 @@ REWARDS: List[Dict[str, Any]] = [
          description="¡Fondo de emergencia completo! Eres imparable.",
          gift="Unas vacaciones familiares bien merecidas.",
          condition="emergency_pct", threshold=100),
-
-    # Goals
     dict(key="goal_first",       name="Visionario",          tier="bronze", icon="🎯",
          description="Creaste tu primera meta financiera.",
          gift="Un libro de finanzas personales para seguir aprendiendo.",
@@ -72,8 +68,6 @@ REWARDS: List[Dict[str, Any]] = [
          description="Tres metas financieras completadas.",
          gift="Una experiencia premium — tú eliges qué la vale.",
          condition="goals_completed", threshold=3),
-
-    # Debt reduction
     dict(key="debt_10pct",       name="Atacando la Deuda",   tier="bronze", icon="⚔️",
          description="Redujiste tu deuda total en un 10%.",
          gift="Un café especial y una mañana tranquila para celebrar.",
@@ -90,8 +84,6 @@ REWARDS: List[Dict[str, Any]] = [
          description="¡Eliminaste todas tus deudas! Eres libre.",
          gift="El viaje que siempre quisiste hacer — sin culpa.",
          condition="debt_reduction_pct", threshold=100),
-
-    # Journaling
     dict(key="journal_1",        name="Primer Reflejo",      tier="bronze", icon="📖",
          description="Escribiste tu primera entrada en la bitácora.",
          gift="Un momento de paz y tu bebida favorita.",
@@ -104,8 +96,6 @@ REWARDS: List[Dict[str, Any]] = [
          description="10 entradas — la constancia es tu superpoder.",
          gift="Una sesión de coaching o mentoría financiera.",
          condition="journal_entries", threshold=10),
-
-    # Monthly surplus
     dict(key="surplus_1",        name="Mes en Verde",        tier="bronze", icon="📈",
          description="Tu primer mes cerrando con balance positivo.",
          gift="Algo pequeño que hayas querido por un tiempo.",
@@ -118,33 +108,26 @@ REWARDS: List[Dict[str, Any]] = [
          description="6 meses en positivo. Eres un ejemplo a seguir.",
          gift="Una inversión en ti mismo: curso, viaje o experiencia.",
          condition="positive_months", threshold=6),
-
-    # ── Hidden / Diamond tier ─────────────────────────────────────────────────
     dict(key="hidden_ask_before_buy", name="Comprador Consciente",  tier="diamond", hidden=True, icon="💎",
          description="Consultaste al asesor antes de tomar una decisión de compra.",
          gift="La claridad mental vale más que cualquier descuento.",
          condition="direct", threshold=1),
-
     dict(key="hidden_budget_chat",    name="Alumno del Presupuesto", tier="diamond", hidden=True, icon="💎",
          description="Dedicaste tiempo a entender tu presupuesto con el asesor.",
          gift="El conocimiento es el mejor activo financiero.",
          condition="direct", threshold=1),
-
     dict(key="hidden_night_owl",      name="Búho Financiero",        tier="diamond", hidden=True, icon="💎",
          description="Gestionaste tus finanzas en las horas más tranquilas del día.",
          gift="La disciplina nocturna merece un buen descanso — date una noche de hotel.",
          condition="direct", threshold=1),
-
     dict(key="hidden_monthly_5",      name="Racha del Mes",          tier="diamond", hidden=True, icon="💎",
          description="Registraste 5 o más movimientos financieros en un solo mes.",
          gift="Tu constancia merece una tarde de relax — spa o masaje.",
          condition="monthly_entries", threshold=5),
-
     dict(key="hidden_debt_and_goal",  name="Equilibrista",           tier="diamond", hidden=True, icon="💎",
          description="Llevas al mismo tiempo una deuda activa y una meta de ahorro.",
          gift="Dominar dos frentes a la vez merece una cena especial.",
          condition="has_debt_and_goal", threshold=1),
-
     dict(key="hidden_categories",     name="Maestro del Registro",   tier="diamond", hidden=True, icon="💎",
          description="Usaste 5 o más categorías distintas para clasificar tus gastos.",
          gift="Un libro sobre finanzas personales — sigue aprendiendo.",
@@ -154,17 +137,27 @@ REWARDS: List[Dict[str, Any]] = [
 REWARD_MAP = {r["key"]: r for r in REWARDS}
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Metrics computation
-# ──────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
+# Date helpers (DB-agnostic)
+# ─────────────────────────────────────────────────────────────────────────────
 
-def compute_metrics(session: Session) -> Dict[str, float]:
+def _month_bounds(year: int, month: int):
+    _, last = calendar.monthrange(year, month)
+    return Date(year, month, 1), Date(year, month, last)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Metrics computation
+# ─────────────────────────────────────────────────────────────────────────────
+
+def compute_metrics(session: Session, user_id: str) -> Dict[str, float]:
     savings_total = float(
-        session.exec(select(func.sum(SavingsFund.amount))).first() or 0
+        session.exec(
+            select(func.sum(SavingsFund.amount)).where(SavingsFund.user_id == user_id)
+        ).first() or 0
     )
 
-    # Emergency fund: find goal containing "emergencia" or "emergency"
-    goals = session.exec(select(Goal)).all()
+    goals = session.exec(select(Goal).where(Goal.user_id == user_id)).all()
     emergency_pct = 0.0
     any_goal_pct = 0.0
     goals_completed = 0
@@ -177,24 +170,23 @@ def compute_metrics(session: Session) -> Dict[str, float]:
             name_lower = g.name.lower()
             if "emergencia" in name_lower or "emergency" in name_lower or "emerg" in name_lower:
                 emergency_pct = max(emergency_pct, pct)
-    # If no emergency goal found, use best goal
     if emergency_pct == 0 and any_goal_pct > 0:
         emergency_pct = any_goal_pct
 
     goals_created = len(goals)
 
-    # Debt reduction
-    debts = session.exec(select(Debt)).all()
+    debts = session.exec(select(Debt).where(Debt.user_id == user_id)).all()
     original_total = sum(float(d.total_amount) for d in debts)
     remaining_total = sum(float(d.remaining_balance) for d in debts)
     debt_reduction_pct = 0.0
     if original_total > 0:
         debt_reduction_pct = (original_total - remaining_total) / original_total * 100
 
-    journal_entries = session.exec(select(func.count(JournalEntry.id))).first() or 0
+    journal_entries = session.exec(
+        select(func.count(JournalEntry.id)).where(JournalEntry.user_id == user_id)
+    ).first() or 0
 
-    # Positive months: count months where income > expenses (last 12 months)
-    today = date.today()
+    today = Date.today()
     positive_months = 0
     for offset in range(12):
         month = today.month - offset
@@ -202,51 +194,58 @@ def compute_metrics(session: Session) -> Dict[str, float]:
         while month <= 0:
             month += 12
             year -= 1
-        year_s, month_s = str(year), f"{month:02d}"
+        start, end = _month_bounds(year, month)
         inc = float(session.exec(
             select(func.sum(Income.amount)).where(
-                func.strftime('%Y', Income.date) == year_s,
-                func.strftime('%m', Income.date) == month_s,
+                Income.user_id == user_id,
+                Income.date >= start,
+                Income.date <= end,
             )
         ).first() or 0)
         exp = float(session.exec(
             select(func.sum(Expense.amount)).where(
-                func.strftime('%Y', Expense.date) == year_s,
-                func.strftime('%m', Expense.date) == month_s,
+                Expense.user_id == user_id,
+                Expense.date >= start,
+                Expense.date <= end,
             )
         ).first() or 0)
         if inc > 0 and inc > exp:
             positive_months += 1
 
-    # Hidden reward metrics
-    today = date.today()
-    month_s = f"{today.month:02d}"
-    year_s = str(today.year)
+    start_m, end_m = _month_bounds(today.year, today.month)
     exp_this_month = int(session.exec(
         select(func.count(Expense.id)).where(
-            func.strftime('%Y', Expense.date) == year_s,
-            func.strftime('%m', Expense.date) == month_s,
+            Expense.user_id == user_id,
+            Expense.date >= start_m,
+            Expense.date <= end_m,
         )
     ).first() or 0)
     inc_this_month = int(session.exec(
         select(func.count(Income.id)).where(
-            func.strftime('%Y', Income.date) == year_s,
-            func.strftime('%m', Income.date) == month_s,
+            Income.user_id == user_id,
+            Income.date >= start_m,
+            Income.date <= end_m,
         )
     ).first() or 0)
+    month_start_dt = datetime(today.year, today.month, 1)
+    _, last_day = calendar.monthrange(today.year, today.month)
+    month_end_dt = datetime(today.year, today.month, last_day, 23, 59, 59)
     journal_this_month = int(session.exec(
         select(func.count(JournalEntry.id)).where(
-            func.strftime('%Y', JournalEntry.created_at) == year_s,
-            func.strftime('%m', JournalEntry.created_at) == month_s,
+            JournalEntry.user_id == user_id,
+            JournalEntry.created_at >= month_start_dt,
+            JournalEntry.created_at <= month_end_dt,
         )
     ).first() or 0)
     monthly_entries = float(exp_this_month + inc_this_month + journal_this_month)
 
     has_debt_and_goal = 1.0 if (len(debts) > 0 and len(goals) > 0) else 0.0
 
-    from ..models.category import Category
     distinct_categories = float(session.exec(
-        select(func.count(func.distinct(Expense.category_id))).where(Expense.category_id != None)
+        select(func.count(func.distinct(Expense.category_id))).where(
+            Expense.user_id == user_id,
+            Expense.category_id.is_not(None),
+        )
     ).first() or 0)
 
     return {
@@ -266,18 +265,22 @@ def compute_metrics(session: Session) -> Dict[str, float]:
 
 def condition_met(reward: Dict, metrics: Dict[str, float]) -> bool:
     if reward.get("condition") == "direct":
-        return False  # only awarded via award_hidden_reward()
+        return False
     return metrics.get(reward["condition"], 0) >= reward["threshold"]
 
 
-def award_hidden_reward(session: Session, key: str) -> bool:
-    """Directly award a hidden reward. Returns True if newly awarded."""
-    existing = session.exec(select(UserReward).where(UserReward.reward_key == key)).first()
+def award_hidden_reward(session: Session, key: str, user_id: str) -> bool:
+    existing = session.exec(
+        select(UserReward).where(
+            UserReward.reward_key == key,
+            UserReward.user_id == user_id,
+        )
+    ).first()
     if existing:
         return False
     if key not in REWARD_MAP:
         return False
-    session.add(UserReward(reward_key=key))
+    session.add(UserReward(reward_key=key, user_id=user_id))
     session.commit()
     return True
 
@@ -289,34 +292,41 @@ def progress_pct(reward: Dict, metrics: Dict[str, float]) -> float:
     return min(100.0, value / reward["threshold"] * 100)
 
 
-# ──────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
 # Check & award
-# ──────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
 
-def check_and_award(session: Session) -> List[str]:
-    """Award newly earned rewards. Also surfaces direct-awarded hidden rewards not yet seen."""
-    profile = session.get(UserProfile, 1)
+def check_and_award(session: Session, user_id: str) -> List[str]:
+    profile = session.exec(
+        select(UserProfile).where(UserProfile.user_id == user_id)
+    ).first()
     if profile and not profile.rewards_enabled:
         return []
 
-    earned_keys = {r.reward_key for r in session.exec(select(UserReward)).all()}
-    metrics = compute_metrics(session)
+    earned_keys = {
+        r.reward_key for r in session.exec(
+            select(UserReward).where(UserReward.user_id == user_id)
+        ).all()
+    }
+    metrics = compute_metrics(session, user_id)
 
     newly_awarded = []
     for reward in REWARDS:
         if reward["key"] in earned_keys:
             continue
         if condition_met(reward, metrics):
-            session.add(UserReward(reward_key=reward["key"]))
+            session.add(UserReward(reward_key=reward["key"], user_id=user_id))
             newly_awarded.append(reward["key"])
 
     if newly_awarded:
         session.commit()
 
-    # Also surface direct-awarded hidden rewards not yet seen
     unseen_direct = [
         r.reward_key for r in session.exec(
-            select(UserReward).where(UserReward.is_seen == False)
+            select(UserReward).where(
+                UserReward.user_id == user_id,
+                UserReward.is_seen == False,
+            )
         ).all()
         if r.reward_key not in newly_awarded
         and REWARD_MAP.get(r.reward_key, {}).get("condition") == "direct"
@@ -325,19 +335,23 @@ def check_and_award(session: Session) -> List[str]:
     return newly_awarded + unseen_direct
 
 
-# ──────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
 # Build full rewards response
-# ──────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
 
-def build_rewards_response(session: Session) -> Dict:
-    profile = session.get(UserProfile, 1)
+def build_rewards_response(session: Session, user_id: str) -> Dict:
+    profile = session.exec(
+        select(UserProfile).where(UserProfile.user_id == user_id)
+    ).first()
     rewards_enabled = profile.rewards_enabled if profile else True
 
     earned_map = {
         r.reward_key: r
-        for r in session.exec(select(UserReward)).all()
+        for r in session.exec(
+            select(UserReward).where(UserReward.user_id == user_id)
+        ).all()
     }
-    metrics = compute_metrics(session)
+    metrics = compute_metrics(session, user_id)
 
     items = []
     for r in REWARDS:

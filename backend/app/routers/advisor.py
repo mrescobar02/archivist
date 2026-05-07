@@ -6,6 +6,8 @@ from fastapi.responses import StreamingResponse
 from sqlmodel import Session, select
 from pydantic import BaseModel
 from ..db.session import get_session
+from ..core.auth import get_current_user, CurrentUser
+from ..core.billing import require_pro
 from ..services.groq_client import get_async_client, get_model, get_vision_model, get_max_tokens
 from ..services.advisor_context import build_context, build_system_prompt
 from ..services.rewards import award_hidden_reward
@@ -66,11 +68,11 @@ async def advisor_chat(
     request: Request,
     body: AdvisorRequest,
     session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(require_pro),
 ):
     if not body.message and not body.image_base64:
         raise HTTPException(status_code=422, detail="message or image is required")
 
-    # ── Hidden reward detection ──────────────────────────────────────────────
     msg_lower = (body.message or "").lower()
     PURCHASE_KEYWORDS = ["debo comprar", "debería comprar", "vale la pena", "conviene comprar",
                          "should i buy", "worth buying", "me recomiendas comprar",
@@ -79,13 +81,12 @@ async def advisor_chat(
                          "cuánto gastar", "regla 50", "50/30/20", "plan financiero",
                          "cómo organizar mis finanzas", "finanzas personales"]
     if any(kw in msg_lower for kw in PURCHASE_KEYWORDS):
-        award_hidden_reward(session, "hidden_ask_before_buy")
+        award_hidden_reward(session, "hidden_ask_before_buy", current_user.user_id)
     if any(kw in msg_lower for kw in BUDGET_KEYWORDS):
-        award_hidden_reward(session, "hidden_budget_chat")
-    # Night owl: after 22:00
+        award_hidden_reward(session, "hidden_budget_chat", current_user.user_id)
     from datetime import datetime as dt
     if dt.now().hour >= 22:
-        award_hidden_reward(session, "hidden_night_owl")
+        award_hidden_reward(session, "hidden_night_owl", current_user.user_id)
 
     client = get_async_client()
     if not client:
@@ -96,25 +97,19 @@ async def advisor_chat(
 
     system_prompt = "You are a helpful household financial advisor."
     if body.include_context:
-        ctx = build_context(session)
+        ctx = build_context(session, current_user.user_id)
         system_prompt = build_system_prompt(ctx)
 
     system_prompt = system_prompt.rstrip() + "\n" + mode_block
 
     has_image = bool(body.image_base64)
     model = get_vision_model() if has_image else get_model()
-
     history_messages = [{"role": m.role, "content": m.content} for m in body.history]
 
     if has_image:
         user_content = [
             {"type": "text", "text": body.message or "Analyze this image in the context of my finances."},
-            {
-                "type": "image_url",
-                "image_url": {
-                    "url": f"data:{body.image_media_type};base64,{body.image_base64}"
-                },
-            },
+            {"type": "image_url", "image_url": {"url": f"data:{body.image_media_type};base64,{body.image_base64}"}},
         ]
         current_message = {"role": "user", "content": user_content}
     else:
@@ -180,12 +175,16 @@ Be concise (max 280 words), use real numbers from the context, and keep an encou
 
 
 @router.post("/report")
-async def financial_report(request: Request, session: Session = Depends(get_session)):
+async def financial_report(
+    request: Request,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(require_pro),
+):
     client = get_async_client()
     if not client:
         raise HTTPException(status_code=503, detail="AI features not configured — set GROQ_API_KEY")
 
-    ctx = build_context(session)
+    ctx = build_context(session, current_user.user_id)
     lang = ctx.get("profile", {}).get("language", "es")
     system = build_system_prompt(ctx)
     prompt = REPORT_PROMPT_EN if lang == "en" else REPORT_PROMPT_ES
@@ -216,9 +215,15 @@ async def financial_report(request: Request, session: Session = Depends(get_sess
 
 
 @router.get("/report/saved")
-def get_saved_analysis(session: Session = Depends(get_session)):
+def get_saved_analysis(
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
     analysis = session.exec(
-        select(FinancialAnalysis).order_by(FinancialAnalysis.created_at.desc()).limit(1)
+        select(FinancialAnalysis)
+        .where(FinancialAnalysis.user_id == current_user.user_id)
+        .order_by(FinancialAnalysis.created_at.desc())
+        .limit(1)
     ).first()
     if not analysis:
         return None
@@ -230,8 +235,12 @@ class SaveAnalysisBody(BaseModel):
 
 
 @router.post("/report/save")
-def save_analysis(body: SaveAnalysisBody, session: Session = Depends(get_session)):
-    analysis = FinancialAnalysis(text=body.text)
+def save_analysis(
+    body: SaveAnalysisBody,
+    session: Session = Depends(get_session),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    analysis = FinancialAnalysis(user_id=current_user.user_id, text=body.text)
     session.add(analysis)
     session.commit()
     session.refresh(analysis)

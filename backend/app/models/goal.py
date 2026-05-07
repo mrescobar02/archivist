@@ -9,6 +9,7 @@ class Goal(SQLModel, table=True):
     __tablename__ = "goals"
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: str = Field(index=True)
     name: str
     target_amount: Decimal = Field(sa_column=Column(Numeric(12, 2)))
     current_amount: Decimal = Field(default=Decimal("0.00"), sa_column=Column(Numeric(12, 2)))

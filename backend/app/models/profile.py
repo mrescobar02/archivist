@@ -6,7 +6,8 @@ from sqlmodel import SQLModel, Field
 class UserProfile(SQLModel, table=True):
     __tablename__ = "user_profile"
 
-    id: int = Field(default=1, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: str = Field(unique=True, index=True)
     display_name: Optional[str] = None
     financial_status: Optional[str] = None
     financial_goals_text: Optional[str] = None
