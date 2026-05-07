@@ -1,9 +1,17 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/hooks/useAuth'
+import { LanguageSelector } from '@/components/primitives/LanguageSelector'
 
-export function LoginPage() {
+interface LoginPageProps {
+  initialMode?: 'login' | 'register'
+  onBack?: () => void
+}
+
+export function LoginPage({ initialMode = 'login', onBack }: LoginPageProps = {}) {
+  const { t } = useTranslation()
   const { signIn, signUp } = useAuth()
-  const [mode, setMode] = useState<'login' | 'register'>('login')
+  const [mode, setMode] = useState<'login' | 'register'>(initialMode)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -16,7 +24,7 @@ export function LoginPage() {
     setError(null)
     setInfo(null)
     if (mode === 'register' && password !== confirm) {
-      setError('Las contraseñas no coinciden')
+      setError(t('auth.passwordMismatch'))
       return
     }
     setLoading(true)
@@ -25,10 +33,10 @@ export function LoginPage() {
         await signIn(email, password)
       } else {
         await signUp(email, password)
-        setInfo('Revisa tu correo para confirmar tu cuenta.')
+        setInfo(t('auth.checkEmail'))
       }
     } catch (err: any) {
-      setError(err.message || 'Algo salió mal')
+      setError(err.message || t('auth.somethingWentWrong'))
     } finally {
       setLoading(false)
     }
@@ -38,8 +46,19 @@ export function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-neutral-950 px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
+          <div className="flex justify-center mb-4">
+            <LanguageSelector compact />
+          </div>
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-300 transition-colors mb-4 mx-auto"
+            >
+              {t('auth.backToHome')}
+            </button>
+          )}
           <h1 className="text-2xl font-semibold text-white">The Archivist</h1>
-          <p className="mt-1 text-sm text-neutral-400">Tu gestor de finanzas personales</p>
+          <p className="mt-1 text-sm text-neutral-400">{t('auth.subtitle')}</p>
         </div>
 
         <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6">
@@ -53,7 +72,7 @@ export function LoginPage() {
                   : 'text-neutral-400 hover:text-white'
               }`}
             >
-              Iniciar sesión
+              {t('auth.signIn')}
             </button>
             <button
               type="button"
@@ -64,24 +83,24 @@ export function LoginPage() {
                   : 'text-neutral-400 hover:text-white'
               }`}
             >
-              Registrarse
+              {t('auth.register')}
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs text-neutral-400 mb-1">Correo electrónico</label>
+              <label className="block text-xs text-neutral-400 mb-1">{t('auth.email')}</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-neutral-500"
-                placeholder="tu@correo.com"
+                placeholder={t('auth.emailPlaceholder')}
               />
             </div>
             <div>
-              <label className="block text-xs text-neutral-400 mb-1">Contraseña</label>
+              <label className="block text-xs text-neutral-400 mb-1">{t('auth.password')}</label>
               <input
                 type="password"
                 required
@@ -93,7 +112,7 @@ export function LoginPage() {
             </div>
             {mode === 'register' && (
               <div>
-                <label className="block text-xs text-neutral-400 mb-1">Confirmar contraseña</label>
+                <label className="block text-xs text-neutral-400 mb-1">{t('auth.confirmPassword')}</label>
                 <input
                   type="password"
                   required
@@ -121,7 +140,7 @@ export function LoginPage() {
               disabled={loading}
               className="w-full bg-white text-black font-medium rounded-lg py-2 text-sm hover:bg-neutral-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {loading ? 'Cargando...' : mode === 'login' ? 'Entrar' : 'Crear cuenta'}
+              {loading ? t('common.loading') : mode === 'login' ? t('auth.enter') : t('auth.createAccount')}
             </button>
           </form>
         </div>

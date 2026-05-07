@@ -27,6 +27,7 @@ export default {
         heading: ['Manrope', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
         sans: ['Inter', 'sans-serif'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
       },
       borderRadius: {
         xl: '0.5rem',
@@ -45,11 +46,16 @@ export default {
           '0%':   { backgroundPosition: '200% center' },
           '100%': { backgroundPosition: '-200% center' },
         },
+        marquee: {
+          '0%':   { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
       },
       animation: {
-        pop:   'pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both',
-        float: 'float 1.8s ease-in-out infinite',
-        shine: 'shine 2.4s ease-in-out infinite',
+        pop:     'pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both',
+        float:   'float 1.8s ease-in-out infinite',
+        shine:   'shine 2.4s ease-in-out infinite',
+        marquee: 'marquee 30s linear infinite',
       },
     },
   },

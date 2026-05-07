@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { OverviewPage } from '@/pages/Overview'
@@ -9,6 +10,7 @@ import { RemindersPage } from '@/pages/Reminders'
 import { JournalPage } from '@/pages/Journal'
 import RewardsPage from '@/pages/Rewards'
 import { LoginPage } from '@/pages/Auth/Login'
+import { LandingPage } from '@/pages/Landing'
 import { BillingPage } from '@/pages/Billing'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -22,9 +24,26 @@ function LoadingScreen() {
 
 export default function App() {
   const { session, loading } = useAuth()
+  const [authMode, setAuthMode] = useState<'login' | 'register' | null>(null)
 
   if (loading) return <LoadingScreen />
-  if (!session) return <LoginPage />
+
+  if (!session) {
+    if (authMode === null) {
+      return (
+        <LandingPage
+          onGetStarted={() => setAuthMode('register')}
+          onSignIn={() => setAuthMode('login')}
+        />
+      )
+    }
+    return (
+      <LoginPage
+        initialMode={authMode}
+        onBack={() => setAuthMode(null)}
+      />
+    )
+  }
 
   return (
     <Routes>
