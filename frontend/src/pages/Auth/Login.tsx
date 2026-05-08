@@ -8,33 +8,20 @@ interface LoginPageProps {
   onBack?: () => void
 }
 
-export function LoginPage({ initialMode = 'login', onBack }: LoginPageProps = {}) {
+export function LoginPage({ onBack }: LoginPageProps = {}) {
   const { t } = useTranslation()
-  const { signIn, signUp } = useAuth()
-  const [mode, setMode] = useState<'login' | 'register'>(initialMode)
+  const { signIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confirm, setConfirm] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [info, setInfo] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-    setInfo(null)
-    if (mode === 'register' && password !== confirm) {
-      setError(t('auth.passwordMismatch'))
-      return
-    }
     setLoading(true)
     try {
-      if (mode === 'login') {
-        await signIn(email, password)
-      } else {
-        await signUp(email, password)
-        setInfo(t('auth.checkEmail'))
-      }
+      await signIn(email, password)
     } catch (err: any) {
       setError(err.message || t('auth.somethingWentWrong'))
     } finally {
@@ -62,29 +49,13 @@ export function LoginPage({ initialMode = 'login', onBack }: LoginPageProps = {}
         </div>
 
         <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6">
-          <div className="flex mb-6 gap-2">
-            <button
-              type="button"
-              onClick={() => { setMode('login'); setError(null); setInfo(null) }}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-                mode === 'login'
-                  ? 'bg-white text-black'
-                  : 'text-neutral-400 hover:text-white'
-              }`}
-            >
-              {t('auth.signIn')}
-            </button>
-            <button
-              type="button"
-              onClick={() => { setMode('register'); setError(null); setInfo(null) }}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-                mode === 'register'
-                  ? 'bg-white text-black'
-                  : 'text-neutral-400 hover:text-white'
-              }`}
-            >
-              {t('auth.register')}
-            </button>
+
+          {/* Closed beta notice */}
+          <div className="flex items-start gap-2.5 bg-amber-950/40 border border-amber-800/40 rounded-lg px-3 py-2.5 mb-5">
+            <span className="text-amber-400 text-base mt-px">🔒</span>
+            <p className="text-xs text-amber-300/80 leading-relaxed">
+              {t('auth.closedBeta')}
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -110,28 +81,10 @@ export function LoginPage({ initialMode = 'login', onBack }: LoginPageProps = {}
                 placeholder="••••••••"
               />
             </div>
-            {mode === 'register' && (
-              <div>
-                <label className="block text-xs text-neutral-400 mb-1">{t('auth.confirmPassword')}</label>
-                <input
-                  type="password"
-                  required
-                  value={confirm}
-                  onChange={e => setConfirm(e.target.value)}
-                  className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-neutral-500"
-                  placeholder="••••••••"
-                />
-              </div>
-            )}
 
             {error && (
               <p className="text-sm text-red-400 bg-red-950/30 border border-red-900/50 rounded-lg px-3 py-2">
                 {error}
-              </p>
-            )}
-            {info && (
-              <p className="text-sm text-green-400 bg-green-950/30 border border-green-900/50 rounded-lg px-3 py-2">
-                {info}
               </p>
             )}
 
@@ -140,7 +93,7 @@ export function LoginPage({ initialMode = 'login', onBack }: LoginPageProps = {}
               disabled={loading}
               className="w-full bg-white text-black font-medium rounded-lg py-2 text-sm hover:bg-neutral-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {loading ? t('common.loading') : mode === 'login' ? t('auth.enter') : t('auth.createAccount')}
+              {loading ? t('common.loading') : t('auth.enter')}
             </button>
           </form>
         </div>

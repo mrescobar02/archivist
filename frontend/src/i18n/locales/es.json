@@ -660,7 +660,8 @@
     "somethingWentWrong": "Algo salió mal",
     "enter": "Entrar",
     "createAccount": "Crear cuenta",
-    "backToHome": "← Volver al inicio"
+    "backToHome": "← Volver al inicio",
+    "closedBeta": "Beta cerrada — acceso solo por invitación. Si recibiste acceso, inicia sesión abajo."
   },
   "landing": {
     "announcement": "Ahora en beta — acceso Pro gratuito para usuarios tempranos",

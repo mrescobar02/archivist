@@ -660,7 +660,8 @@
     "somethingWentWrong": "Something went wrong",
     "enter": "Sign in",
     "createAccount": "Create account",
-    "backToHome": "← Back to home"
+    "backToHome": "← Back to home",
+    "closedBeta": "Closed beta — access by invitation only. If you received an invite, sign in below."
   },
   "landing": {
     "announcement": "Now in beta — free Pro access for early users",

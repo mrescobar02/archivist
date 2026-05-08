@@ -32,7 +32,7 @@ export default function App() {
     if (authMode === null) {
       return (
         <LandingPage
-          onGetStarted={() => setAuthMode('register')}
+          onGetStarted={() => setAuthMode('login')}
           onSignIn={() => setAuthMode('login')}
         />
       )
