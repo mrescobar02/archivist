@@ -300,6 +300,8 @@ export function LandingPage({ onGetStarted, onSignIn }: Props) {
         </div>
       </header>
 
+      <main>
+
       {/* ── Hero ── */}
       <section className="px-6 md:px-12 pt-24 pb-16 text-center max-w-4xl mx-auto">
         <div className="inline-flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1 text-xs text-gray-500 font-medium mb-8">
@@ -516,6 +518,8 @@ export function LandingPage({ onGetStarted, onSignIn }: Props) {
           </div>
         </div>
       </section>
+
+      </main>
 
       {/* ── Footer ── */}
       <footer className="px-6 md:px-12 pb-10 pt-8 border-t border-gray-100">
