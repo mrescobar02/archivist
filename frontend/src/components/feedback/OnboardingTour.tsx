@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-
-const TOUR_KEY = 'archivist_tour_done'
+import { supabase } from '@/lib/supabase'
 
 interface Step {
   icon: string
@@ -11,29 +10,31 @@ interface Step {
 }
 
 const STEPS: Step[] = [
-  { icon: 'waving_hand',       titleKey: 'tour.step1title', descKey: 'tour.step1desc', color: 'text-emerald-500' },
-  { icon: 'dashboard',         titleKey: 'tour.step2title', descKey: 'tour.step2desc', color: 'text-blue-500' },
-  { icon: 'receipt_long',      titleKey: 'tour.step3title', descKey: 'tour.step3desc', color: 'text-violet-500' },
+  { icon: 'waving_hand',            titleKey: 'tour.step1title', descKey: 'tour.step1desc', color: 'text-emerald-500' },
+  { icon: 'dashboard',              titleKey: 'tour.step2title', descKey: 'tour.step2desc', color: 'text-blue-500' },
+  { icon: 'receipt_long',           titleKey: 'tour.step3title', descKey: 'tour.step3desc', color: 'text-violet-500' },
   { icon: 'account_balance_wallet', titleKey: 'tour.step4title', descKey: 'tour.step4desc', color: 'text-amber-500' },
-  { icon: 'savings',           titleKey: 'tour.step5title', descKey: 'tour.step5desc', color: 'text-rose-500' },
-  { icon: 'auto_awesome',      titleKey: 'tour.step6title', descKey: 'tour.step6desc', color: 'text-indigo-500' },
+  { icon: 'savings',                titleKey: 'tour.step5title', descKey: 'tour.step5desc', color: 'text-rose-500' },
+  { icon: 'auto_awesome',           titleKey: 'tour.step6title', descKey: 'tour.step6desc', color: 'text-indigo-500' },
 ]
 
 export function OnboardingTour() {
   const { t } = useTranslation()
-  const [open, setOpen] = useState(false)
+  const [show, setShow] = useState<boolean | null>(null) // null = loading
   const [step, setStep] = useState(0)
 
   useEffect(() => {
-    if (!localStorage.getItem(TOUR_KEY)) setOpen(true)
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setShow(user?.user_metadata?.onboarding_done !== true)
+    })
   }, [])
 
-  const finish = () => {
-    localStorage.setItem(TOUR_KEY, '1')
-    setOpen(false)
+  const finish = async () => {
+    setShow(false)
+    await supabase.auth.updateUser({ data: { onboarding_done: true } })
   }
 
-  if (!open) return null
+  if (!show) return null
 
   const current = STEPS[step]
   const isLast = step === STEPS.length - 1
