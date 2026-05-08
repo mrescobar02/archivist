@@ -12,7 +12,8 @@
     "reports": "Reportes",
     "assistant": "Asistente IA",
     "rewards": "Recompensas",
-    "profile": "Mi Perfil"
+    "profile": "Mi Perfil",
+    "signOut": "Cerrar sesión"
   },
   "fondos": {
     "title": "Fondos",
@@ -620,6 +621,24 @@
       "Shopping": "Compras",
       "Other": "Otros"
     }
+  },
+  "tour": {
+    "back": "Atrás",
+    "next": "Siguiente",
+    "finish": "¡Empezar!",
+    "skip": "Saltar recorrido",
+    "step1title": "¡Bienvenido a The Archivist!",
+    "step1desc": "Tu administrador de finanzas del hogar. Te mostraré lo básico en un minuto.",
+    "step2title": "Tu Panel Principal",
+    "step2desc": "Empieza aquí. Ve tu ingreso mensual, gastos y balance neto de un vistazo. Todo en una vista limpia.",
+    "step3title": "Registra Cada Gasto",
+    "step3desc": "Agrega gastos en segundos — a mano o escaneando un recibo. La IA lo lee, categoriza y registra por ti.",
+    "step4title": "Gestiona tu Presupuesto",
+    "step4desc": "Define presupuestos mensuales por categoría. Se actualizan en tiempo real mientras gastas — siempre sabrás cuánto te queda.",
+    "step5title": "Ahorra para lo que Importa",
+    "step5desc": "Crea metas de ahorro para lo que quieras — vacaciones, fondo de emergencia, enganche. Sigue el progreso y celebra cada logro.",
+    "step6title": "Tu Asesor Financiero IA",
+    "step6desc": "Pregunta lo que quieras sobre tus finanzas. Recibe consejos personalizados, análisis de gastos y ayuda para tomar mejores decisiones."
   },
   "celebration": {
     "goalReached": "¡Meta Alcanzada!",
