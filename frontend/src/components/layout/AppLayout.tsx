@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Toast } from '@/components/primitives/Toast'
 import { CelebrationModal } from '@/components/feedback/CelebrationModal'
+import { OnboardingTour } from '@/components/feedback/OnboardingTour'
 
 export function AppLayout() {
   return (
@@ -12,6 +13,7 @@ export function AppLayout() {
       </main>
       <Toast />
       <CelebrationModal />
+      <OnboardingTour />
     </div>
   )
 }

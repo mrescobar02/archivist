@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import i18n from '@/i18n'
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile'
 import { Card } from '@/components/primitives/Card'
 import { Button } from '@/components/primitives/Button'
@@ -38,6 +39,7 @@ export function ProfilePage() {
 
   useEffect(() => {
     if (profile) {
+      const lang = profile.language ?? 'es'
       setForm({
         display_name: profile.display_name ?? '',
         financial_status: profile.financial_status ?? '',
@@ -45,8 +47,9 @@ export function ProfilePage() {
         concerns: profile.concerns ?? '',
         risk_tolerance: profile.risk_tolerance,
         notes: profile.notes ?? '',
-        language: profile.language ?? 'es',
+        language: lang,
       })
+      i18n.changeLanguage(lang)
       setDirty(false)
     }
   }, [profile])
@@ -95,7 +98,7 @@ export function ProfilePage() {
           {(['es', 'en'] as const).map(lang => (
             <button
               key={lang}
-              onClick={() => { setForm(p => ({ ...p, language: lang })); setDirty(true) }}
+              onClick={() => { setForm(p => ({ ...p, language: lang })); setDirty(true); i18n.changeLanguage(lang) }}
               className={`flex-1 py-2.5 px-4 rounded-xl border text-sm font-medium transition-all ${
                 form.language === lang
                   ? 'border-tertiary bg-tertiary/10 text-tertiary'

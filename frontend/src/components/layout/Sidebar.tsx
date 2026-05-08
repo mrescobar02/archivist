@@ -2,10 +2,12 @@ import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { useRewards } from '@/hooks/useRewards'
+import { useAuth } from '@/hooks/useAuth'
 
 export function Sidebar() {
   const { t } = useTranslation()
   const { data: rewards } = useRewards()
+  const { signOut } = useAuth()
   const unseenCount = rewards?.unseen_count ?? 0
 
   const navItems = [
@@ -75,8 +77,14 @@ export function Sidebar() {
           {t('nav.profile')}
         </NavLink>
       </div>
-      <div className="px-5 mt-3">
-        <p className="text-xs text-outline">{t('app.localOnly')}</p>
+      <div className="px-3 mt-1">
+        <button
+          onClick={signOut}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all text-on-surface-variant hover:bg-red-50 hover:text-red-600"
+        >
+          <span className="material-symbols-outlined text-xl">logout</span>
+          {t('nav.signOut')}
+        </button>
       </div>
     </aside>
   )

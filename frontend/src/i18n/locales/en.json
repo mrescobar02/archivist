@@ -12,7 +12,8 @@
     "reports": "Reports",
     "assistant": "AI Assistant",
     "rewards": "Rewards",
-    "profile": "My Profile"
+    "profile": "My Profile",
+    "signOut": "Sign out"
   },
   "fondos": {
     "title": "Funds",
@@ -620,6 +621,24 @@
       "Shopping": "Shopping",
       "Other": "Other"
     }
+  },
+  "tour": {
+    "back": "Back",
+    "next": "Next",
+    "finish": "Get started!",
+    "skip": "Skip tour",
+    "step1title": "Welcome to The Archivist!",
+    "step1desc": "Your personal household finance manager. Let me show you around — it only takes a minute.",
+    "step2title": "Your Dashboard",
+    "step2desc": "Start here. See your monthly income, expenses, and net balance at a glance. Everything in one clean view.",
+    "step3title": "Track Every Expense",
+    "step3desc": "Log expenses in seconds — manually or by scanning a receipt. AI reads it, categorizes it, and logs it for you.",
+    "step4title": "Manage Your Budget",
+    "step4desc": "Set monthly budgets by category. Watch them update in real time as you spend — know exactly what's left.",
+    "step5title": "Save for What Matters",
+    "step5desc": "Create savings goals for anything — a vacation, emergency fund, or down payment. Track progress and celebrate every milestone.",
+    "step6title": "Your AI Financial Advisor",
+    "step6desc": "Ask anything about your finances. Get personalized advice, spending insights, and help making better money decisions."
   },
   "celebration": {
     "goalReached": "Goal Reached!",
