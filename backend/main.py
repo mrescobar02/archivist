@@ -34,8 +34,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -47,6 +47,7 @@ def on_startup():
         logger.info("Groq AI client initialized")
     else:
         logger.warning("GROQ_API_KEY not set — AI features disabled")
+    logger.info(f"CORS origins: {settings.cors_origins_list}")
     if not settings.SUPABASE_JWT_SECRET:
         logger.warning("SUPABASE_JWT_SECRET not set — running in dev mode (no JWT verification)")
     if not settings.STRIPE_SECRET_KEY:
