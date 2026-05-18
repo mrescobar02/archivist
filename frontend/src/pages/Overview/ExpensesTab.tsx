@@ -345,8 +345,14 @@ export function ExpensesTab() {
               placeholder={t('common.selectAccount')}
               options={accounts.map(a => ({ value: String(a.id), label: a.name }))} />
           </div>
-          <Select label={t('common.type')} value={form.expense_type} onChange={f('expense_type')}
-            options={[{ value: 'fixed', label: t('common.fixed') }, { value: 'variable', label: t('common.variable') }]} />
+          <div>
+            <div className="flex items-center gap-1 mb-1">
+              <label className="text-xs font-medium text-on-surface-variant uppercase tracking-wider">{t('common.type')}</label>
+              <Tooltip text={t('overview.expenses.typeTooltip')} />
+            </div>
+            <Select value={form.expense_type} onChange={f('expense_type')}
+              options={[{ value: 'fixed', label: t('common.fixed') }, { value: 'variable', label: t('common.variable') }]} />
+          </div>
           <div className="flex gap-3 pt-2">
             <Button variant="secondary" className="flex-1" onClick={() => setOpen(false)}>{t('common.cancel')}</Button>
             <Button className="flex-1" loading={createExpense.isPending || updateExpense.isPending} onClick={handleSubmit}>
@@ -396,9 +402,14 @@ export function ExpensesTab() {
                 onChange={sf('account_id')} placeholder={t('common.selectAccount')}
                 options={accounts.map(a => ({ value: String(a.id), label: a.name }))} />
             </div>
-            <Select label={t('common.type')} value={scanPreview.form.expense_type}
-              onChange={sf('expense_type')}
-              options={[{ value: 'variable', label: t('common.variable') }, { value: 'fixed', label: t('common.fixed') }]} />
+            <div>
+              <div className="flex items-center gap-1 mb-1">
+                <label className="text-xs font-medium text-on-surface-variant uppercase tracking-wider">{t('common.type')}</label>
+                <Tooltip text={t('overview.expenses.typeTooltip')} />
+              </div>
+              <Select value={scanPreview.form.expense_type} onChange={sf('expense_type')}
+                options={[{ value: 'variable', label: t('common.variable') }, { value: 'fixed', label: t('common.fixed') }]} />
+            </div>
 
             <div className="flex gap-3 pt-2">
               <Button variant="secondary" className="flex-1" onClick={handleScanDiscard}>

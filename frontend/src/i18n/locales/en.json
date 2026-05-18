@@ -121,7 +121,7 @@
       "viewMonth": "By Month",
       "noExpensesMonth": "No expenses this month.",
       "categoryTooltip": "Group your expenses by category to see spending patterns.",
-      "typeTooltip": "Fixed: recurring monthly expenses. Variable: one-time or irregular expenses."
+      "typeTooltip": "Fixed: repeats every month with the same amount (rent, subscriptions). Variable: changes each month (groceries, entertainment)."
     }
   },
   "accounts": {

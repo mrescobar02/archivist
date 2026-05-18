@@ -121,7 +121,7 @@
       "viewMonth": "Por mes",
       "noExpensesMonth": "Sin gastos este mes.",
       "categoryTooltip": "Agrupa tus gastos por categoría para ver patrones de gasto.",
-      "typeTooltip": "Fijo: gastos mensuales recurrentes. Variable: gastos únicos o irregulares."
+      "typeTooltip": "Fijo: se repite cada mes con el mismo monto (renta, suscripciones). Variable: cambia cada mes (supermercado, entretenimiento)."
     }
   },
   "accounts": {
