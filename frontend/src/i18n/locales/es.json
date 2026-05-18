@@ -103,7 +103,12 @@
       "addTitle": "Agregar ingreso",
       "noAccountWarning": "Añade una cuenta bancaria antes de registrar ingresos.",
       "typeTooltip": "Clasifica tu ingreso: sueldo, freelance, inversión, alquiler, negocio, regalo u otro.",
-      "quickFill": "Rellenar desde plantilla"
+      "quickFill": "Rellenar desde plantilla",
+      "noAccountModal": {
+        "title": "Necesitas una cuenta bancaria",
+        "body": "Para registrar un ingreso debes tener al menos una cuenta bancaria. ¿Quieres crear una ahora?",
+        "cta": "Crear cuenta"
+      }
     },
     "expenses": {
       "count": "{{count}} gastos",
@@ -155,7 +160,8 @@
       "noTransfers": "Sin transferencias aún.",
       "from": "De",
       "to": "A"
-    }
+    },
+    "created": "Cuenta creada"
   },
   "goalsDebts": {
     "title": "Metas y Deudas",

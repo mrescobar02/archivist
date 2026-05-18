@@ -103,7 +103,12 @@
       "addTitle": "Add Income",
       "noAccountWarning": "Please add a bank account before recording income.",
       "typeTooltip": "Categorize your income: salary, freelance, investment, rental, business, gift, or other.",
-      "quickFill": "Quick fill from template"
+      "quickFill": "Quick fill from template",
+      "noAccountModal": {
+        "title": "You need a bank account",
+        "body": "To record income you need at least one bank account. Would you like to create one now?",
+        "cta": "Create account"
+      }
     },
     "expenses": {
       "count": "{{count}} expenses",
@@ -155,7 +160,8 @@
       "noTransfers": "No transfers yet.",
       "from": "From",
       "to": "To"
-    }
+    },
+    "created": "Account created"
   },
   "goalsDebts": {
     "title": "Goals & Debts",
