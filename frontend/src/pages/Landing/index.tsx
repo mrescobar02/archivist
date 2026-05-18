@@ -8,7 +8,7 @@ interface Props { onGetStarted: () => void; onSignIn: () => void }
 
 function MockOverviewCard() {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-2xl p-5 w-72 select-none">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-2xl p-5 w-full max-w-xs select-none">
       <div className="flex items-center justify-between mb-4">
         <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">October 2024</span>
         <span className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs">👤</span>
@@ -275,7 +275,7 @@ export function LandingPage({ onGetStarted, onSignIn }: Props) {
   ]
 
   return (
-    <div className="min-h-screen bg-white font-sans" style={{ color: '#141414' }}>
+    <div className="min-h-screen bg-white font-sans overflow-x-hidden" style={{ color: '#141414' }}>
 
       {/* ── Nav ── */}
       <header
@@ -284,10 +284,10 @@ export function LandingPage({ onGetStarted, onSignIn }: Props) {
       >
         <span className="font-heading font-bold text-base tracking-tight">The Archivist</span>
         <div className="flex items-center gap-2">
-          <LanguageSelector />
+          <span className="hidden sm:block"><LanguageSelector /></span>
           <button
             onClick={onSignIn}
-            className="text-sm px-4 py-1.5 rounded-full hover:bg-black/5 transition-colors font-medium"
+            className="hidden sm:block text-sm px-4 py-1.5 rounded-full hover:bg-black/5 transition-colors font-medium"
           >
             {t('landing.signIn')}
           </button>
@@ -333,11 +333,11 @@ export function LandingPage({ onGetStarted, onSignIn }: Props) {
         </div>
 
         {/* Floating cards composition */}
-        <div className="relative flex justify-center items-start gap-4 flex-wrap md:flex-nowrap">
-          <div className="md:-rotate-3 md:translate-y-4 transition-transform hover:rotate-0 hover:translate-y-0 duration-300">
+        <div className="relative flex justify-center items-start gap-4">
+          <div className="w-full max-w-xs md:w-auto md:-rotate-3 md:translate-y-4 transition-transform hover:rotate-0 hover:translate-y-0 duration-300">
             <MockOverviewCard />
           </div>
-          <div className="md:rotate-2 md:-translate-y-2 flex flex-col gap-3 transition-transform hover:rotate-0 hover:translate-y-0 duration-300">
+          <div className="hidden md:flex md:rotate-2 md:-translate-y-2 flex-col gap-3 transition-transform hover:rotate-0 hover:translate-y-0 duration-300">
             <MockGoalCard />
             <MockAICard />
           </div>
@@ -347,10 +347,14 @@ export function LandingPage({ onGetStarted, onSignIn }: Props) {
       {/* ── Stats ── */}
       <section className="border-y border-gray-100 bg-gray-50">
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4">
-          {stats.map(({ n, l }) => (
-            <div key={l} className="flex flex-col items-center py-10 border-r border-gray-100 last:border-r-0">
-              <span className="font-heading font-black text-3xl md:text-4xl tracking-tight mb-1">{n}</span>
-              <span className="text-xs text-gray-400 text-center px-4">{l}</span>
+          {stats.map(({ n, l }, i) => (
+            <div key={l} className={`flex flex-col items-center py-8 md:py-10 border-gray-100 ${
+              i % 2 !== 1 ? 'border-r' : ''
+            } md:border-r md:last:border-r-0 ${
+              i < 2 ? 'border-b md:border-b-0' : ''
+            }`}>
+              <span className="font-heading font-black text-2xl md:text-4xl tracking-tight mb-1">{n}</span>
+              <span className="text-xs text-gray-400 text-center px-3">{l}</span>
             </div>
           ))}
         </div>
@@ -369,12 +373,12 @@ export function LandingPage({ onGetStarted, onSignIn }: Props) {
         </div>
 
         {/* Tab bar */}
-        <div className="flex items-center justify-center gap-1 mb-8 bg-gray-100 rounded-full p-1 w-fit mx-auto">
+        <div className="flex items-center justify-center gap-1 mb-8 bg-gray-100 rounded-full p-1 w-fit mx-auto overflow-x-auto max-w-full">
           {tabs.map(tab => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+              className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                 activeTab === tab.key
                   ? 'bg-white text-[#141414] shadow-sm'
                   : 'text-gray-500 hover:text-[#141414]'
