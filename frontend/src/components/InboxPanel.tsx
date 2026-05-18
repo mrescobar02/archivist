@@ -65,13 +65,13 @@ export function InboxPanel({ open, onClose }: InboxPanelProps) {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm"
+        className="fixed inset-0 z-[200] bg-black/20 backdrop-blur-sm"
         onClick={onClose}
       />
 
       {/* Panel — slides from right on desktop, bottom sheet on mobile */}
       <div className={cn(
-        'fixed z-50 bg-surface-container-lowest shadow-2xl flex flex-col',
+        'fixed z-[201] bg-surface-container-lowest shadow-2xl flex flex-col',
         // Mobile: bottom sheet
         'inset-x-0 bottom-0 rounded-t-2xl max-h-[80dvh]',
         // Desktop: right panel
