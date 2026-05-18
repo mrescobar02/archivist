@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useIncomes, useCreateIncome, useUpdateIncome, useDeleteIncome } from '@/hooks/useIncomes'
-import { useAccounts } from '@/hooks/useAccounts'
+import { useAccounts, useCreateAccount } from '@/hooks/useAccounts'
 import { useFrequentIncomes } from '@/hooks/useFrequentIncomes'
 import { Button } from '@/components/primitives/Button'
 import { Modal } from '@/components/primitives/Modal'
@@ -19,6 +19,10 @@ interface IncomeForm { amount: string; date: string; description: string; accoun
 const empty: IncomeForm = { amount: '', date: new Date().toISOString().slice(0, 10), description: '', account_id: '', source: '', type: 'salary' }
 const incomeTypes = ['salary', 'freelance', 'investment', 'rental', 'business', 'gift', 'other']
 
+interface AccountForm { name: string; type: string; initial_balance: string }
+const emptyAccount: AccountForm = { name: '', type: 'checking', initial_balance: '0' }
+const accountTypes = ['checking', 'savings', 'cash', 'investment']
+
 export function IncomeTab() {
   const { t } = useTranslation()
   const { data: incomes, isLoading, error, refetch } = useIncomes()
@@ -26,6 +30,7 @@ export function IncomeTab() {
   const createIncome = useCreateIncome()
   const updateIncome = useUpdateIncome()
   const deleteIncome = useDeleteIncome()
+  const createAccount = useCreateAccount()
 
   const { data: frequentIncomes = [] } = useFrequentIncomes()
   const { showToast } = useUiStore()
@@ -34,13 +39,18 @@ export function IncomeTab() {
   const [editing, setEditing] = useState<Income | null>(null)
   const [form, setForm] = useState<IncomeForm>(empty)
 
+  const [noAccountOpen, setNoAccountOpen] = useState(false)
+  const [createAccountOpen, setCreateAccountOpen] = useState(false)
+  const [accountForm, setAccountForm] = useState<AccountForm>(emptyAccount)
+
   const openCreate = () => {
     if (!accounts.length) {
-      showToast(t('overview.income.noAccountWarning'), 'error')
+      setNoAccountOpen(true)
       return
     }
     setEditing(null); setForm(empty); setOpen(true)
   }
+
   const openEdit = (inc: Income) => {
     setEditing(inc)
     setForm({ amount: String(inc.amount), date: inc.date, description: inc.description || '', account_id: String(inc.account_id), source: inc.source || '', type: inc.type })
@@ -56,8 +66,23 @@ export function IncomeTab() {
     }
   }
 
+  const handleCreateAccount = () => {
+    const payload = { name: accountForm.name, type: accountForm.type as 'checking' | 'savings' | 'cash' | 'investment', initial_balance: Number(accountForm.initial_balance) }
+    createAccount.mutate(payload, {
+      onSuccess: () => {
+        setCreateAccountOpen(false)
+        setAccountForm(emptyAccount)
+        showToast(t('accounts.created'))
+        setEditing(null); setForm(empty); setOpen(true)
+      },
+    })
+  }
+
   const f = (k: keyof IncomeForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm(p => ({ ...p, [k]: e.target.value }))
+
+  const af = (k: keyof AccountForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    setAccountForm(p => ({ ...p, [k]: e.target.value }))
 
   if (isLoading) return <LoadingShimmer />
   if (error) return <ErrorState onRetry={() => refetch()} />
@@ -113,6 +138,45 @@ export function IncomeTab() {
         </div>
       )}
 
+      {/* No account — decision modal */}
+      <Modal open={noAccountOpen} onClose={() => setNoAccountOpen(false)} size="sm">
+        <div className="flex flex-col items-center text-center gap-4 py-2">
+          <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center">
+            <span className="material-symbols-outlined text-2xl text-amber-500">account_balance_wallet</span>
+          </div>
+          <div>
+            <h3 className="text-base font-semibold text-on-surface">{t('overview.income.noAccountModal.title')}</h3>
+            <p className="text-sm text-on-surface-variant mt-1">{t('overview.income.noAccountModal.body')}</p>
+          </div>
+          <div className="flex gap-3 w-full pt-1">
+            <Button variant="secondary" className="flex-1" onClick={() => setNoAccountOpen(false)}>{t('common.cancel')}</Button>
+            <Button className="flex-1" onClick={() => { setNoAccountOpen(false); setCreateAccountOpen(true) }}>
+              {t('overview.income.noAccountModal.cta')}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Create account modal */}
+      <Modal open={createAccountOpen} onClose={() => setCreateAccountOpen(false)} title={t('accounts.addAccount')}>
+        <div className="space-y-4">
+          <Input label={t('accounts.accountName')} value={accountForm.name} onChange={af('name')} placeholder={t('accounts.egChase')} />
+          <div className="grid grid-cols-2 gap-4">
+            <Select label={t('common.type')} value={accountForm.type} onChange={af('type')}
+              options={accountTypes.map(tp => ({ value: tp, label: t(`accounts.types.${tp}` as any, tp) }))} />
+            <Input label={t('accounts.initialBalanceLabel')} type="number" step="0.01"
+              value={accountForm.initial_balance} onChange={af('initial_balance')} />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <Button variant="secondary" className="flex-1" onClick={() => setCreateAccountOpen(false)}>{t('common.cancel')}</Button>
+            <Button className="flex-1" loading={createAccount.isPending} onClick={handleCreateAccount} disabled={!accountForm.name}>
+              {t('accounts.addAccount')}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Income create / edit modal */}
       <Modal open={open} onClose={() => setOpen(false)} title={editing ? t('overview.income.editTitle') : t('overview.income.addTitle')}>
         <div className="space-y-4">
           {!editing && frequentIncomes.length > 0 && (
