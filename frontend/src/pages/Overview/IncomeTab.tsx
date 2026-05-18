@@ -51,20 +51,6 @@ export function IncomeTab() {
     setEditing(null); setForm(empty); setOpen(true)
   }
 
-  const handleCreateAccount = () => {
-    const payload = { name: accountForm.name, type: accountForm.type as 'checking' | 'savings' | 'cash' | 'investment', initial_balance: Number(accountForm.initial_balance) }
-    createAccount.mutate(payload, {
-      onSuccess: () => {
-        setCreateAccountOpen(false)
-        setAccountForm(emptyAccount)
-        showToast(t('accounts.created'))
-        setEditing(null); setForm(empty); setOpen(true)
-      },
-    })
-  }
-
-  const af = (k: keyof AccountForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-    setAccountForm(p => ({ ...p, [k]: e.target.value }))
   const openEdit = (inc: Income) => {
     setEditing(inc)
     setForm({ amount: String(inc.amount), date: inc.date, description: inc.description || '', account_id: String(inc.account_id), source: inc.source || '', type: inc.type })
@@ -80,8 +66,23 @@ export function IncomeTab() {
     }
   }
 
+  const handleCreateAccount = () => {
+    const payload = { name: accountForm.name, type: accountForm.type as 'checking' | 'savings' | 'cash' | 'investment', initial_balance: Number(accountForm.initial_balance) }
+    createAccount.mutate(payload, {
+      onSuccess: () => {
+        setCreateAccountOpen(false)
+        setAccountForm(emptyAccount)
+        showToast(t('accounts.created'))
+        setEditing(null); setForm(empty); setOpen(true)
+      },
+    })
+  }
+
   const f = (k: keyof IncomeForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm(p => ({ ...p, [k]: e.target.value }))
+
+  const af = (k: keyof AccountForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    setAccountForm(p => ({ ...p, [k]: e.target.value }))
 
   if (isLoading) return <LoadingShimmer />
   if (error) return <ErrorState onRetry={() => refetch()} />
@@ -137,7 +138,7 @@ export function IncomeTab() {
         </div>
       )}
 
-      {/* No account decision modal */}
+      {/* No account — decision modal */}
       <Modal open={noAccountOpen} onClose={() => setNoAccountOpen(false)} size="sm">
         <div className="flex flex-col items-center text-center gap-4 py-2">
           <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center">
@@ -175,6 +176,7 @@ export function IncomeTab() {
         </div>
       </Modal>
 
+      {/* Income create / edit modal */}
       <Modal open={open} onClose={() => setOpen(false)} title={editing ? t('overview.income.editTitle') : t('overview.income.addTitle')}>
         <div className="space-y-4">
           {!editing && frequentIncomes.length > 0 && (
