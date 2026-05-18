@@ -1,14 +1,20 @@
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { useRewards } from '@/hooks/useRewards'
 import { useAuth } from '@/hooks/useAuth'
+import { useNotifications } from '@/hooks/useNotifications'
+import { InboxPanel } from '@/components/InboxPanel'
 
 export function Sidebar() {
   const { t } = useTranslation()
   const { data: rewards } = useRewards()
   const { signOut } = useAuth()
+  const { data: inboxData } = useNotifications()
+  const [inboxOpen, setInboxOpen] = useState(false)
   const unseenCount = rewards?.unseen_count ?? 0
+  const unreadCount = inboxData?.unreadCount ?? 0
 
   const navItems = [
     { to: '/', icon: 'dashboard', label: t('nav.overview'), end: true },
@@ -21,10 +27,25 @@ export function Sidebar() {
 
   return (
     <aside className="hidden md:flex w-64 flex-shrink-0 h-screen sticky top-0 bg-neutral-50 flex-col py-6 overflow-y-auto">
-      <div className="px-5 mb-8">
-        <h1 className="text-lg font-bold text-on-surface tracking-tight">{t('app.name')}</h1>
-        <p className="text-xs text-on-surface-variant mt-0.5">{t('app.tagline')}</p>
+      <div className="px-5 mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="text-lg font-bold text-on-surface tracking-tight">{t('app.name')}</h1>
+          <p className="text-xs text-on-surface-variant mt-0.5">{t('app.tagline')}</p>
+        </div>
+        <button
+          onClick={() => setInboxOpen(true)}
+          className="relative p-1.5 rounded-lg text-on-surface-variant hover:bg-neutral-200/50 transition-colors mt-0.5"
+          title={t('inbox.title')}
+        >
+          <span className="material-symbols-outlined text-xl">inbox</span>
+          {unreadCount > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-blue-500 text-white text-[9px] font-bold flex items-center justify-center leading-none">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          )}
+        </button>
       </div>
+      <InboxPanel open={inboxOpen} onClose={() => setInboxOpen(false)} />
       <nav className="flex-1 px-3 space-y-0.5">
         {navItems.map(item => (
           <NavLink

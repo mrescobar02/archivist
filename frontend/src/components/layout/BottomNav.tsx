@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { useRewards } from '@/hooks/useRewards'
 import { useAuth } from '@/hooks/useAuth'
+import { useNotifications } from '@/hooks/useNotifications'
+import { InboxPanel } from '@/components/InboxPanel'
 
 const primaryItems = [
   { to: '/', icon: 'dashboard', labelKey: 'nav.overview', end: true },
@@ -19,15 +21,22 @@ const moreItems = [
   { to: '/profile', icon: 'manage_accounts', labelKey: 'nav.profile' },
 ]
 
+const INBOX_ITEM = { icon: 'inbox', labelKey: 'inbox.title' }
+
 export function BottomNav() {
   const { t } = useTranslation()
   const { data: rewards } = useRewards()
+  const { data: inboxData } = useNotifications()
   const { signOut } = useAuth()
   const [moreOpen, setMoreOpen] = useState(false)
+  const [inboxOpen, setInboxOpen] = useState(false)
   const unseenCount = rewards?.unseen_count ?? 0
+  const unreadCount = inboxData?.unreadCount ?? 0
 
   return (
     <>
+      <InboxPanel open={inboxOpen} onClose={() => setInboxOpen(false)} />
+
       {moreOpen && (
         <div className="fixed inset-0 z-40 md:hidden" onClick={() => setMoreOpen(false)}>
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
@@ -58,6 +67,21 @@ export function BottomNav() {
                   <span className="text-[10px] font-medium leading-tight text-center">{t(item.labelKey)}</span>
                 </NavLink>
               ))}
+              {/* Inbox button */}
+              <button
+                onClick={() => { setMoreOpen(false); setInboxOpen(true) }}
+                className="flex flex-col items-center gap-1 py-3 rounded-xl transition-colors text-on-surface-variant hover:bg-surface-container"
+              >
+                <span className="relative">
+                  <span className="material-symbols-outlined text-[22px]">{INBOX_ITEM.icon}</span>
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-blue-500 text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </span>
+                <span className="text-[10px] font-medium leading-tight text-center">{t(INBOX_ITEM.labelKey)}</span>
+              </button>
             </div>
             <button
               onClick={() => { setMoreOpen(false); signOut() }}
@@ -94,7 +118,14 @@ export function BottomNav() {
               moreOpen ? 'text-tertiary' : 'text-on-surface-variant'
             )}
           >
-            <span className="material-symbols-outlined text-[22px]">more_horiz</span>
+            <span className="relative">
+              <span className="material-symbols-outlined text-[22px]">more_horiz</span>
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-blue-500 text-white text-[8px] font-bold flex items-center justify-center leading-none">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </span>
             <span className="text-[10px] font-medium">{t('nav.more')}</span>
           </button>
         </div>

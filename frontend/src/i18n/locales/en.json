@@ -739,5 +739,9 @@
     "finalCtaDesc": "Free during beta. No credit card required. Start in 2 minutes.",
     "ctaButton": "Get started free",
     "footerTagline": "Built for households who care about their money."
+  },
+  "inbox": {
+    "title": "Inbox",
+    "empty": "No messages yet"
   }
 }

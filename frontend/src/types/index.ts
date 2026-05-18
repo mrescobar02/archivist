@@ -247,6 +247,17 @@ export interface ChatMessage {
   created_at: string
 }
 
+export type NotificationType = 'info' | 'success' | 'warning'
+
+export interface SystemNotification {
+  id: string
+  title: string
+  body: string
+  type: NotificationType
+  is_active: boolean
+  created_at: string
+}
+
 export interface RewardsResponse {
   rewards_enabled: boolean
   metrics: Record<string, number>

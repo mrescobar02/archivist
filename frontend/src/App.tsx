@@ -12,6 +12,7 @@ import RewardsPage from '@/pages/Rewards'
 import { LoginPage } from '@/pages/Auth/Login'
 import { LandingPage } from '@/pages/Landing'
 import { BillingPage } from '@/pages/Billing'
+import { AdminNotificationsPage } from '@/pages/Admin/NotificationsPage'
 import { useAuth } from '@/hooks/useAuth'
 
 function LoadingScreen() {
@@ -57,6 +58,9 @@ export default function App() {
         <Route path="profile" element={<ProfilePage />} />
         <Route path="rewards" element={<RewardsPage />} />
         <Route path="billing" element={<BillingPage />} />
+        {session.user.email === 'isaacescobar02@gmail.com' && (
+          <Route path="admin/notifications" element={<AdminNotificationsPage />} />
+        )}
       </Route>
     </Routes>
   )

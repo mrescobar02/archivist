@@ -739,5 +739,9 @@
     "finalCtaDesc": "Gratis en beta. Sin tarjeta de crédito. Empieza en 2 minutos.",
     "ctaButton": "Comenzar gratis",
     "footerTagline": "Hecho para hogares que se preocupan por su dinero."
+  },
+  "inbox": {
+    "title": "Bandeja de entrada",
+    "empty": "Sin mensajes por ahora"
   }
 }
