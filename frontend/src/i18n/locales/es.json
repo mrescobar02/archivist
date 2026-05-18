@@ -620,6 +620,15 @@
     "analysisEmpty": "Haz clic en \"Generar análisis\" para obtener un reporte financiero personalizado.",
     "analysisDate": "Generado el {{date}} a las {{time}}"
   },
+  "incomeTypes": {
+    "salary": "Sueldo",
+    "freelance": "Freelance",
+    "investment": "Inversión",
+    "rental": "Alquiler",
+    "business": "Negocio",
+    "gift": "Regalo",
+    "other": "Otro"
+  },
   "categories": {
     "names": {
       "Housing": "Vivienda",

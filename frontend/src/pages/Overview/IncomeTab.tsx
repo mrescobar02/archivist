@@ -81,12 +81,7 @@ export function IncomeTab() {
               <tr className="sticky top-0 bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
                 <th className="text-left px-4 py-3">{t('common.date')}</th>
                 <th className="text-left px-4 py-3">{t('common.description')}</th>
-                <th className="text-left px-4 py-3">
-                  <span className="inline-flex items-center gap-1">
-                    {t('common.type')}
-                    <Tooltip text={t('overview.income.typeTooltip')} />
-                  </span>
-                </th>
+                <th className="text-left px-4 py-3">{t('common.type')}</th>
                 <th className="text-left px-4 py-3">{t('common.account')}</th>
                 <th className="text-right px-4 py-3">{t('common.amount')}</th>
                 <th className="px-4 py-3" />
@@ -97,7 +92,7 @@ export function IncomeTab() {
                 <tr key={inc.id} className="hover:bg-surface-container-low/50 transition-colors">
                   <td className="px-4 py-3 text-on-surface-variant">{formatDate(inc.date)}</td>
                   <td className="px-4 py-3 font-medium text-on-surface">{inc.description || '—'}</td>
-                  <td className="px-4 py-3 capitalize text-on-surface-variant">{inc.type}</td>
+                  <td className="px-4 py-3 text-on-surface-variant">{t(`incomeTypes.${inc.type}`, inc.type)}</td>
                   <td className="px-4 py-3 text-on-surface-variant">{accounts.find(a => a.id === inc.account_id)?.name || '—'}</td>
                   <td className="px-4 py-3 text-right"><Amount value={inc.amount} positive /></td>
                   <td className="px-4 py-3">
@@ -146,8 +141,14 @@ export function IncomeTab() {
           </div>
           <Input label={t('common.description')} value={form.description} onChange={f('description')} />
           <div className="grid grid-cols-2 gap-4">
-            <Select label={t('common.type')} value={form.type} onChange={f('type')}
-              options={incomeTypes.map(tp => ({ value: tp, label: tp.charAt(0).toUpperCase() + tp.slice(1) }))} />
+            <div>
+              <div className="flex items-center gap-1 mb-1">
+                <label className="text-xs font-medium text-on-surface-variant uppercase tracking-wider">{t('common.type')}</label>
+                <Tooltip text={t('overview.income.typeTooltip')} />
+              </div>
+              <Select value={form.type} onChange={f('type')}
+                options={incomeTypes.map(tp => ({ value: tp, label: t(`incomeTypes.${tp}`) }))} />
+            </div>
             <Select label={t('common.account')} value={form.account_id} onChange={f('account_id')}
               placeholder={t('common.selectAccount')}
               options={accounts.map(a => ({ value: a.id, label: a.name }))} />

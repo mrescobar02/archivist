@@ -277,18 +277,8 @@ export function ExpensesTab() {
               <tr className="sticky top-0 bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
                 <th className="text-left px-4 py-3">{t('common.date')}</th>
                 <th className="text-left px-4 py-3">{t('common.description')}</th>
-                <th className="text-left px-4 py-3">
-                  <span className="inline-flex items-center gap-1">
-                    {t('common.category')}
-                    <Tooltip text={t('overview.expenses.categoryTooltip')} />
-                  </span>
-                </th>
-                <th className="text-left px-4 py-3">
-                  <span className="inline-flex items-center gap-1">
-                    {t('common.type')}
-                    <Tooltip text={t('overview.expenses.typeTooltip')} />
-                  </span>
-                </th>
+                <th className="text-left px-4 py-3">{t('common.category')}</th>
+                <th className="text-left px-4 py-3">{t('common.type')}</th>
                 <th className="text-right px-4 py-3">{t('common.amount')}</th>
                 <th className="px-4 py-3" />
               </tr>
@@ -342,9 +332,15 @@ export function ExpensesTab() {
           </div>
           <Input label={t('common.description')} value={form.description} onChange={f('description')} />
           <div className="grid grid-cols-2 gap-4">
-            <Select label={t('common.category')} value={form.category_id} onChange={f('category_id')}
-              placeholder={t('common.selectCategory')}
-              options={categories.map(c => ({ value: String(c.id), label: c.name }))} />
+            <div>
+              <div className="flex items-center gap-1 mb-1">
+                <label className="text-xs font-medium text-on-surface-variant uppercase tracking-wider">{t('common.category')}</label>
+                <Tooltip text={t('overview.expenses.categoryTooltip')} />
+              </div>
+              <Select value={form.category_id} onChange={f('category_id')}
+                placeholder={t('common.selectCategory')}
+                options={categories.map(c => ({ value: String(c.id), label: t(`categories.names.${c.name}`, c.name) }))} />
+            </div>
             <Select label={t('common.account')} value={form.account_id} onChange={f('account_id')}
               placeholder={t('common.selectAccount')}
               options={accounts.map(a => ({ value: String(a.id), label: a.name }))} />
@@ -395,7 +391,7 @@ export function ExpensesTab() {
             <div className="grid grid-cols-2 gap-4">
               <Select label={t('common.category')} value={scanPreview.form.category_id}
                 onChange={sf('category_id')} placeholder={t('common.selectCategory')}
-                options={categories.map(c => ({ value: String(c.id), label: c.name }))} />
+                options={categories.map(c => ({ value: String(c.id), label: t(`categories.names.${c.name}`, c.name) }))} />
               <Select label={t('common.account')} value={scanPreview.form.account_id}
                 onChange={sf('account_id')} placeholder={t('common.selectAccount')}
                 options={accounts.map(a => ({ value: String(a.id), label: a.name }))} />
