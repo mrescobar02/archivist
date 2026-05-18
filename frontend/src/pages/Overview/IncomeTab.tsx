@@ -79,10 +79,10 @@ export function IncomeTab() {
           <table className="w-full text-sm">
             <thead>
               <tr className="sticky top-0 bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
-                <th className="text-left px-4 py-3">{t('common.date')}</th>
+                <th className="hidden sm:table-cell text-left px-4 py-3">{t('common.date')}</th>
                 <th className="text-left px-4 py-3">{t('common.description')}</th>
-                <th className="text-left px-4 py-3">{t('common.type')}</th>
-                <th className="text-left px-4 py-3">{t('common.account')}</th>
+                <th className="hidden sm:table-cell text-left px-4 py-3">{t('common.type')}</th>
+                <th className="hidden sm:table-cell text-left px-4 py-3">{t('common.account')}</th>
                 <th className="text-right px-4 py-3">{t('common.amount')}</th>
                 <th className="px-4 py-3" />
               </tr>
@@ -90,10 +90,10 @@ export function IncomeTab() {
             <tbody className="divide-y divide-outline-variant/20">
               {incomes.map(inc => (
                 <tr key={inc.id} className="hover:bg-surface-container-low/50 transition-colors">
-                  <td className="px-4 py-3 text-on-surface-variant">{formatDate(inc.date)}</td>
+                  <td className="hidden sm:table-cell px-4 py-3 text-on-surface-variant">{formatDate(inc.date)}</td>
                   <td className="px-4 py-3 font-medium text-on-surface">{inc.description || '—'}</td>
-                  <td className="px-4 py-3 text-on-surface-variant">{t(`incomeTypes.${inc.type}`, inc.type)}</td>
-                  <td className="px-4 py-3 text-on-surface-variant">{accounts.find(a => a.id === inc.account_id)?.name || '—'}</td>
+                  <td className="hidden sm:table-cell px-4 py-3 text-on-surface-variant">{t(`incomeTypes.${inc.type}`, inc.type)}</td>
+                  <td className="hidden sm:table-cell px-4 py-3 text-on-surface-variant">{accounts.find(a => a.id === inc.account_id)?.name || '—'}</td>
                   <td className="px-4 py-3 text-right"><Amount value={inc.amount} positive /></td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">

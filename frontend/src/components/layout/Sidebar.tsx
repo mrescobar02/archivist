@@ -20,7 +20,7 @@ export function Sidebar() {
   ]
 
   return (
-    <aside className="w-64 flex-shrink-0 h-screen sticky top-0 bg-neutral-50 flex flex-col py-6 overflow-y-auto">
+    <aside className="hidden md:flex w-64 flex-shrink-0 h-screen sticky top-0 bg-neutral-50 flex-col py-6 overflow-y-auto">
       <div className="px-5 mb-8">
         <h1 className="text-lg font-bold text-on-surface tracking-tight">{t('app.name')}</h1>
         <p className="text-xs text-on-surface-variant mt-0.5">{t('app.tagline')}</p>

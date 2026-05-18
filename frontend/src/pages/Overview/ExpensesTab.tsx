@@ -275,10 +275,10 @@ export function ExpensesTab() {
           <table className="w-full text-sm">
             <thead>
               <tr className="sticky top-0 bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
-                <th className="text-left px-4 py-3">{t('common.date')}</th>
+                <th className="hidden sm:table-cell text-left px-4 py-3">{t('common.date')}</th>
                 <th className="text-left px-4 py-3">{t('common.description')}</th>
                 <th className="text-left px-4 py-3">{t('common.category')}</th>
-                <th className="text-left px-4 py-3">{t('common.type')}</th>
+                <th className="hidden sm:table-cell text-left px-4 py-3">{t('common.type')}</th>
                 <th className="text-right px-4 py-3">{t('common.amount')}</th>
                 <th className="px-4 py-3" />
               </tr>
@@ -288,7 +288,7 @@ export function ExpensesTab() {
                 const cat = categories.find(c => c.id === Number(exp.category_id))
                 return (
                   <tr key={exp.id} className="hover:bg-surface-container-low/50 transition-colors">
-                    <td className="px-4 py-3 text-on-surface-variant">{formatDate(exp.date)}</td>
+                    <td className="hidden sm:table-cell px-4 py-3 text-on-surface-variant">{formatDate(exp.date)}</td>
                     <td className="px-4 py-3 font-medium text-on-surface">{exp.description || '—'}</td>
                     <td className="px-4 py-3">
                       {cat
@@ -298,7 +298,7 @@ export function ExpensesTab() {
                           </span>
                         : <span className="text-xs text-outline">—</span>}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="hidden sm:table-cell px-4 py-3">
                       <Badge variant={exp.expense_type === 'fixed' ? 'info' : 'default'}>
                         {t(`common.${exp.expense_type}`, exp.expense_type)}
                       </Badge>

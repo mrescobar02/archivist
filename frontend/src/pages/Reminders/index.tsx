@@ -79,7 +79,7 @@ export function RemindersPage() {
   }
 
   if (loadingAll || loadingUpcoming) return (
-    <div className="p-8 space-y-4">{Array.from({ length: 4 }).map((_, i) => <CardShimmer key={i} />)}</div>
+    <div className="p-4 sm:p-8 space-y-4">{Array.from({ length: 4 }).map((_, i) => <CardShimmer key={i} />)}</div>
   )
   if (errorAll) return <ErrorState onRetry={refetch} />
 
@@ -90,7 +90,7 @@ export function RemindersPage() {
   const totalMonthly = (allFixed ?? []).filter(fe => fe.is_active && fe.frequency === 'monthly').reduce((sum, fe) => sum + fe.amount, 0)
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 sm:p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-on-surface">{t('reminders.title')}</h1>

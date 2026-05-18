@@ -9,7 +9,7 @@ interface ModalProps {
   size?: 'sm' | 'md' | 'lg'
 }
 
-const sizes = { sm: 'max-w-sm', md: 'max-w-lg', lg: 'max-w-2xl' }
+const sizes = { sm: 'sm:max-w-sm', md: 'sm:max-w-lg', lg: 'sm:max-w-2xl' }
 
 export function Modal({ open, onClose, title, children, size = 'md' }: ModalProps) {
   useEffect(() => {
@@ -24,18 +24,26 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="flex min-h-full items-center justify-center p-4">
-      <div className={cn('relative w-full rounded-2xl bg-surface-container-lowest shadow-xl', sizes[size])}>
-        {title && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-outline-variant/30">
-            <h2 className="text-base font-semibold text-on-surface">{title}</h2>
-            <button onClick={onClose} className="p-1 rounded-md text-on-surface-variant hover:bg-surface-container transition-colors">
-              <span className="material-symbols-outlined text-xl">close</span>
-            </button>
+      <div className="flex min-h-full items-end sm:items-center justify-center sm:p-4">
+        <div className={cn(
+          'relative w-full bg-surface-container-lowest shadow-xl',
+          'rounded-t-2xl sm:rounded-2xl',
+          sizes[size]
+        )}>
+          {/* Mobile drag handle */}
+          <div className="sm:hidden flex justify-center pt-3 pb-1">
+            <div className="w-8 h-1 bg-outline-variant/50 rounded-full" />
           </div>
-        )}
-        <div className="px-6 py-5">{children}</div>
-      </div>
+          {title && (
+            <div className="flex items-center justify-between px-6 py-4 border-b border-outline-variant/30">
+              <h2 className="text-base font-semibold text-on-surface">{title}</h2>
+              <button onClick={onClose} className="p-1 rounded-md text-on-surface-variant hover:bg-surface-container transition-colors">
+                <span className="material-symbols-outlined text-xl">close</span>
+              </button>
+            </div>
+          )}
+          <div className="px-6 py-5">{children}</div>
+        </div>
       </div>
     </div>
   )

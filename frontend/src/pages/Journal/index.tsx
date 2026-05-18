@@ -65,14 +65,14 @@ export function JournalPage() {
   }
 
   if (isLoading) return (
-    <div className="p-8 space-y-4 max-w-2xl">
+    <div className="p-4 sm:p-8 space-y-4 max-w-2xl">
       {Array.from({ length: 3 }).map((_, i) => <CardShimmer key={i} />)}
     </div>
   )
   if (error) return <ErrorState onRetry={() => refetch()} />
 
   return (
-    <div className="p-8 max-w-2xl space-y-6">
+    <div className="p-4 sm:p-8 max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-on-surface">{t('journal.title')}</h1>

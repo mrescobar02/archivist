@@ -126,13 +126,13 @@ export function ReportsPage() {
   }, [])
 
   if (loadingI || loadingE) return (
-    <div className="p-8 grid grid-cols-1 xl:grid-cols-2 gap-6">
+    <div className="p-4 sm:p-8 grid grid-cols-1 xl:grid-cols-2 gap-6">
       {Array.from({ length: 4 }).map((_, i) => <CardShimmer key={i} className="h-64" />)}
     </div>
   )
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 sm:p-8 space-y-6">
       <div className="mb-2">
         <h1 className="text-2xl font-bold text-on-surface">{t('reports.title')}</h1>
         <p className="text-sm text-on-surface-variant mt-1">{t('reports.subtitle')}</p>

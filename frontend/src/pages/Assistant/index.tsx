@@ -29,7 +29,7 @@ export function AssistantPage() {
   const groups = groupByDay(conversations, t)
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-[calc(100dvh-4rem)] md:h-screen overflow-hidden">
       {/* Sidebar */}
       <aside className={cn(
         'flex-shrink-0 flex flex-col bg-neutral-50 border-r border-outline/10 transition-all duration-200 overflow-hidden',

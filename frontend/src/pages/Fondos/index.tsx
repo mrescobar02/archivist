@@ -19,7 +19,7 @@ export function FondosPage() {
   ]
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-on-surface">{t('fondos.title')}</h1>
         <p className="text-sm text-on-surface-variant mt-1">{t('fondos.subtitle')}</p>

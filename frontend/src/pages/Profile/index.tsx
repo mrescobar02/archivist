@@ -82,14 +82,14 @@ export function ProfilePage() {
   }
 
   if (isLoading) return (
-    <div className="max-w-2xl space-y-4">
+    <div className="p-4 sm:p-8 max-w-2xl space-y-4">
       <CardShimmer />
       <CardShimmer />
     </div>
   )
 
   return (
-    <div className="p-8 max-w-2xl space-y-6">
+    <div className="p-4 sm:p-8 max-w-2xl space-y-6">
       <div>
         <h2 className="text-lg font-semibold text-on-surface">{t('profile.title')}</h2>
         <p className="text-sm text-on-surface-variant mt-1">{t('profile.subtitle')}</p>
@@ -196,7 +196,7 @@ export function ProfilePage() {
 
         <div className="border-t border-outline-variant/20 pt-4 space-y-3">
           <p className="text-xs font-medium text-on-surface-variant">{t('profile.frequentIncomes.addNew')}</p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
               label={t('common.name')}
               value={fiForm.name}
@@ -210,7 +210,7 @@ export function ProfilePage() {
               onChange={e => setFiForm(p => ({ ...p, amount: e.target.value }))}
             />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Select
               label={t('common.type')}
               value={fiForm.type}
