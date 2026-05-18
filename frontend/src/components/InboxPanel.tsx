@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { useNotifications, useMarkAllRead } from '@/hooks/useNotifications'
@@ -61,7 +62,7 @@ export function InboxPanel({ open, onClose }: InboxPanelProps) {
 
   const notifications = data?.notifications ?? []
 
-  return (
+  return createPortal(
     <>
       {/* Backdrop */}
       <div
@@ -69,13 +70,13 @@ export function InboxPanel({ open, onClose }: InboxPanelProps) {
         onClick={onClose}
       />
 
-      {/* Panel — slides from right on desktop, bottom sheet on mobile */}
+      {/* Panel — bottom sheet on mobile, left panel on desktop */}
       <div className={cn(
         'fixed z-[201] bg-surface-container-lowest shadow-2xl flex flex-col',
         // Mobile: bottom sheet
         'inset-x-0 bottom-0 rounded-t-2xl max-h-[80dvh]',
-        // Desktop: right panel
-        'md:inset-x-auto md:right-4 md:top-4 md:bottom-4 md:w-80 md:rounded-2xl',
+        // Desktop: left panel
+        'md:inset-x-auto md:left-4 md:top-4 md:bottom-4 md:w-80 md:rounded-2xl',
       )}>
         {/* Drag handle (mobile only) */}
         <div className="md:hidden flex justify-center pt-3 pb-1">
@@ -110,6 +111,7 @@ export function InboxPanel({ open, onClose }: InboxPanelProps) {
           )}
         </div>
       </div>
-    </>
+    </>,
+    document.body
   )
 }
