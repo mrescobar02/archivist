@@ -8,6 +8,7 @@ import { Modal } from '@/components/primitives/Modal'
 import { Input } from '@/components/primitives/Input'
 import { Select } from '@/components/primitives/Select'
 import { Badge } from '@/components/primitives/Badge'
+import { Tooltip } from '@/components/primitives/Tooltip'
 import { Amount } from '@/components/primitives/Amount'
 import { LoadingShimmer } from '@/components/feedback/LoadingShimmer'
 import { ErrorState } from '@/components/feedback/ErrorState'
@@ -276,8 +277,18 @@ export function ExpensesTab() {
               <tr className="sticky top-0 bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
                 <th className="text-left px-4 py-3">{t('common.date')}</th>
                 <th className="text-left px-4 py-3">{t('common.description')}</th>
-                <th className="text-left px-4 py-3">{t('common.category')}</th>
-                <th className="text-left px-4 py-3">{t('common.type')}</th>
+                <th className="text-left px-4 py-3">
+                  <span className="inline-flex items-center gap-1">
+                    {t('common.category')}
+                    <Tooltip text={t('overview.expenses.categoryTooltip')} />
+                  </span>
+                </th>
+                <th className="text-left px-4 py-3">
+                  <span className="inline-flex items-center gap-1">
+                    {t('common.type')}
+                    <Tooltip text={t('overview.expenses.typeTooltip')} />
+                  </span>
+                </th>
                 <th className="text-right px-4 py-3">{t('common.amount')}</th>
                 <th className="px-4 py-3" />
               </tr>

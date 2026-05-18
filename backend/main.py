@@ -19,6 +19,7 @@ from app.routers import (
     advisor, receipts, csv, profile, journal, rewards, chat,
 )
 from app.routers import billing
+from app.routers.frequent_incomes import router as frequent_incomes_router
 from app.services.groq_client import get_client
 
 logging.basicConfig(level=logging.INFO)
@@ -83,3 +84,4 @@ app.include_router(journal.router)
 app.include_router(rewards.router)
 app.include_router(chat.router)
 app.include_router(billing.router)
+app.include_router(frequent_incomes_router)

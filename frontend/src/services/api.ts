@@ -69,6 +69,14 @@ export const updateIncome = (id: number, data: Partial<Income>) =>
   api.put<Income>(`/incomes/${id}`, data).then(r => r.data)
 export const deleteIncome = (id: number) => api.delete(`/incomes/${id}`)
 
+// ─── Frequent Incomes ─────────────────────────────────────────────────────────
+export interface FrequentIncome { id: number; name: string; amount: number; type: string; source: string }
+export const listFrequentIncomes = () =>
+  api.get<FrequentIncome[]>('/frequent-incomes').then(r => r.data)
+export const createFrequentIncome = (data: Omit<FrequentIncome, 'id'>) =>
+  api.post<FrequentIncome>('/frequent-incomes', data).then(r => r.data)
+export const deleteFrequentIncome = (id: number) => api.delete(`/frequent-incomes/${id}`)
+
 // ─── Expenses ─────────────────────────────────────────────────────────────────
 export const listExpenses = (params?: {
   account_id?: number; category_id?: number; expense_type?: string;

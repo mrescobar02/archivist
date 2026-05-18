@@ -2,14 +2,17 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useIncomes, useCreateIncome, useUpdateIncome, useDeleteIncome } from '@/hooks/useIncomes'
 import { useAccounts } from '@/hooks/useAccounts'
+import { useFrequentIncomes } from '@/hooks/useFrequentIncomes'
 import { Button } from '@/components/primitives/Button'
 import { Modal } from '@/components/primitives/Modal'
 import { Input } from '@/components/primitives/Input'
 import { Select } from '@/components/primitives/Select'
 import { Amount } from '@/components/primitives/Amount'
+import { Tooltip } from '@/components/primitives/Tooltip'
 import { LoadingShimmer } from '@/components/feedback/LoadingShimmer'
 import { ErrorState } from '@/components/feedback/ErrorState'
 import { formatDate } from '@/lib/format'
+import { useUiStore } from '@/store/ui'
 import type { Income } from '@/types'
 
 interface IncomeForm { amount: string; date: string; description: string; account_id: string; source: string; type: string }
@@ -24,11 +27,20 @@ export function IncomeTab() {
   const updateIncome = useUpdateIncome()
   const deleteIncome = useDeleteIncome()
 
+  const { data: frequentIncomes = [] } = useFrequentIncomes()
+  const { showToast } = useUiStore()
+
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<Income | null>(null)
   const [form, setForm] = useState<IncomeForm>(empty)
 
-  const openCreate = () => { setEditing(null); setForm(empty); setOpen(true) }
+  const openCreate = () => {
+    if (!accounts.length) {
+      showToast(t('overview.income.noAccountWarning'), 'error')
+      return
+    }
+    setEditing(null); setForm(empty); setOpen(true)
+  }
   const openEdit = (inc: Income) => {
     setEditing(inc)
     setForm({ amount: String(inc.amount), date: inc.date, description: inc.description || '', account_id: String(inc.account_id), source: inc.source || '', type: inc.type })
@@ -69,7 +81,12 @@ export function IncomeTab() {
               <tr className="sticky top-0 bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
                 <th className="text-left px-4 py-3">{t('common.date')}</th>
                 <th className="text-left px-4 py-3">{t('common.description')}</th>
-                <th className="text-left px-4 py-3">{t('common.type')}</th>
+                <th className="text-left px-4 py-3">
+                  <span className="inline-flex items-center gap-1">
+                    {t('common.type')}
+                    <Tooltip text={t('overview.income.typeTooltip')} />
+                  </span>
+                </th>
                 <th className="text-left px-4 py-3">{t('common.account')}</th>
                 <th className="text-right px-4 py-3">{t('common.amount')}</th>
                 <th className="px-4 py-3" />
@@ -103,6 +120,26 @@ export function IncomeTab() {
 
       <Modal open={open} onClose={() => setOpen(false)} title={editing ? t('overview.income.editTitle') : t('overview.income.addTitle')}>
         <div className="space-y-4">
+          {!editing && frequentIncomes.length > 0 && (
+            <div>
+              <label className="text-xs font-medium text-on-surface-variant mb-1.5 block">
+                {t('overview.income.quickFill')}
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {frequentIncomes.map(fi => (
+                  <button
+                    key={fi.id}
+                    type="button"
+                    onClick={() => setForm(p => ({ ...p, amount: String(fi.amount), type: fi.type, source: fi.source }))}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-surface-container hover:bg-tertiary/10 hover:text-tertiary border border-outline-variant/40 transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-sm">bolt</span>
+                    {fi.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-4">
             <Input label={t('common.amount')} type="number" min="0" step="0.01" value={form.amount} onChange={f('amount')} />
             <Input label={t('common.date')} type="date" value={form.date} onChange={f('date')} />

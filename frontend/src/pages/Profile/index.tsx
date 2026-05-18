@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import i18n from '@/i18n'
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile'
+import { useFrequentIncomes, useCreateFrequentIncome, useDeleteFrequentIncome } from '@/hooks/useFrequentIncomes'
 import { Card } from '@/components/primitives/Card'
 import { Button } from '@/components/primitives/Button'
 import { Input } from '@/components/primitives/Input'
@@ -9,6 +10,8 @@ import { Textarea } from '@/components/primitives/Textarea'
 import { Select } from '@/components/primitives/Select'
 import { CardShimmer } from '@/components/feedback/LoadingShimmer'
 import type { RiskTolerance } from '@/types'
+
+const incomeTypes = ['salary', 'freelance', 'investment', 'rental', 'business', 'gift', 'other']
 
 interface Form {
   display_name: string
@@ -34,8 +37,12 @@ export function ProfilePage() {
   const { t } = useTranslation()
   const { data: profile, isLoading } = useProfile()
   const updateProfile = useUpdateProfile()
+  const { data: frequentIncomes = [] } = useFrequentIncomes()
+  const createFrequentIncome = useCreateFrequentIncome()
+  const deleteFrequentIncome = useDeleteFrequentIncome()
   const [form, setForm] = useState<Form>(empty)
   const [dirty, setDirty] = useState(false)
+  const [fiForm, setFiForm] = useState({ name: '', amount: '', type: 'salary', source: '' })
 
   useEffect(() => {
     if (profile) {
@@ -156,6 +163,84 @@ export function ProfilePage() {
         </h3>
         <Textarea label={t('profile.aiContextLabel')} value={form.notes} onChange={set('notes')}
           placeholder={t('profile.aiContextPlaceholder')} rows={3} />
+      </Card>
+
+      <Card>
+        <h3 className="text-sm font-semibold text-on-surface mb-1 flex items-center gap-2">
+          <span className="material-symbols-outlined text-base text-on-surface-variant">bolt</span>
+          {t('profile.frequentIncomes.title')}
+        </h3>
+        <p className="text-xs text-on-surface-variant mb-4">{t('profile.frequentIncomes.subtitle')}</p>
+
+        {frequentIncomes.length > 0 && (
+          <div className="space-y-2 mb-4">
+            {frequentIncomes.map(fi => (
+              <div key={fi.id} className="flex items-center justify-between rounded-lg border border-outline-variant/30 px-3 py-2">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-on-surface">{fi.name}</span>
+                  <span className="text-xs text-on-surface-variant capitalize">{fi.type}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-semibold text-on-surface">${fi.amount.toLocaleString()}</span>
+                  <button
+                    onClick={() => deleteFrequentIncome.mutate(fi.id)}
+                    className="p-1 rounded text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-base">delete</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="border-t border-outline-variant/20 pt-4 space-y-3">
+          <p className="text-xs font-medium text-on-surface-variant">{t('profile.frequentIncomes.addNew')}</p>
+          <div className="grid grid-cols-2 gap-3">
+            <Input
+              label={t('common.name')}
+              value={fiForm.name}
+              onChange={e => setFiForm(p => ({ ...p, name: e.target.value }))}
+              placeholder={t('profile.frequentIncomes.namePlaceholder')}
+            />
+            <Input
+              label={t('common.amount')}
+              type="number" min="0" step="0.01"
+              value={fiForm.amount}
+              onChange={e => setFiForm(p => ({ ...p, amount: e.target.value }))}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Select
+              label={t('common.type')}
+              value={fiForm.type}
+              onChange={e => setFiForm(p => ({ ...p, type: e.target.value }))}
+              options={incomeTypes.map(tp => ({ value: tp, label: tp.charAt(0).toUpperCase() + tp.slice(1) }))}
+            />
+            <Input
+              label={t('overview.income.source')}
+              value={fiForm.source}
+              onChange={e => setFiForm(p => ({ ...p, source: e.target.value }))}
+              placeholder={t('overview.income.egEmployer')}
+            />
+          </div>
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={!fiForm.name.trim() || !fiForm.amount}
+            loading={createFrequentIncome.isPending}
+            onClick={() => {
+              if (!fiForm.name.trim() || !fiForm.amount) return
+              createFrequentIncome.mutate(
+                { name: fiForm.name.trim(), amount: Number(fiForm.amount), type: fiForm.type, source: fiForm.source },
+                { onSuccess: () => setFiForm({ name: '', amount: '', type: 'salary', source: '' }) }
+              )
+            }}
+          >
+            <span className="material-symbols-outlined text-sm">add</span>
+            {t('profile.frequentIncomes.add')}
+          </Button>
+        </div>
       </Card>
 
       <div className="flex justify-end gap-3 pb-6">

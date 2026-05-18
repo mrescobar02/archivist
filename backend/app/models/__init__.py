@@ -16,6 +16,7 @@ from .profile import UserProfile
 from .journal import JournalEntry
 from .reward import UserReward
 from .report import FinancialAnalysis
+from .frequent_income import FrequentIncome
 
 __all__ = [
     "AccountType", "ExpenseType", "Frequency", "CsvImportStatus", "ReceiptScanStatus",
@@ -23,5 +24,5 @@ __all__ = [
     "ChatConversation", "ChatMessage",
     "Goal", "GoalContribution", "SavingsFund", "SavingsContribution", "Debt", "DebtPayment",
     "IncomeDistribution", "CsvImport", "ReceiptScan", "UserProfile", "JournalEntry",
-    "UserReward", "FinancialAnalysis",
+    "UserReward", "FinancialAnalysis", "FrequentIncome",
 ]

@@ -99,7 +99,10 @@
       "source": "Fuente",
       "egEmployer": "Ej: Nombre del empleador",
       "editTitle": "Editar ingreso",
-      "addTitle": "Agregar ingreso"
+      "addTitle": "Agregar ingreso",
+      "noAccountWarning": "Añade una cuenta bancaria antes de registrar ingresos.",
+      "typeTooltip": "Clasifica tu ingreso: sueldo, freelance, inversión, alquiler, negocio, regalo u otro.",
+      "quickFill": "Rellenar desde plantilla"
     },
     "expenses": {
       "count": "{{count}} gastos",
@@ -115,7 +118,9 @@
       "receiptDetectedBadge": "Detectado por IA",
       "viewAll": "General",
       "viewMonth": "Por mes",
-      "noExpensesMonth": "Sin gastos este mes."
+      "noExpensesMonth": "Sin gastos este mes.",
+      "categoryTooltip": "Agrupa tus gastos por categoría para ver patrones de gasto.",
+      "typeTooltip": "Fijo: gastos mensuales recurrentes. Variable: gastos únicos o irregulares."
     }
   },
   "accounts": {
@@ -576,7 +581,14 @@
     "saveProfile": "Guardar perfil",
     "language": "Idioma",
     "languageEs": "Español",
-    "languageEn": "English"
+    "languageEn": "English",
+    "frequentIncomes": {
+      "title": "Ingresos frecuentes",
+      "subtitle": "Guarda plantillas de ingresos recurrentes para llenar formularios más rápido.",
+      "addNew": "Agregar nueva plantilla",
+      "namePlaceholder": "Ej: Sueldo mensual",
+      "add": "Agregar plantilla"
+    }
   },
   "reports": {
     "title": "Reportes",

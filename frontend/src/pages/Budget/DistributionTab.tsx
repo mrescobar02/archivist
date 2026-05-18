@@ -30,6 +30,7 @@ export function DistributionTab() {
 
   const [items, setItems] = useState<{ key: string; label: string; pct: number }[]>([])
   const [newLabel, setNewLabel] = useState('')
+  const [newPct, setNewPct] = useState('0')
   const [selectedMonth, setSelectedMonth] = useState(() => {
     const now = new Date()
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
@@ -58,8 +59,10 @@ export function DistributionTab() {
     if (!label) return
     const key = toKey(label)
     if (items.find(i => i.key === key)) return
-    setItems(prev => [...prev, { key, label, pct: 0 }])
+    const pct = Math.max(0, Math.min(100, Number(newPct) || 0))
+    setItems(prev => [...prev, { key, label, pct }])
     setNewLabel('')
+    setNewPct('0')
   }
 
   const removeItem = (key: string) => setItems(prev => prev.filter(i => i.key !== key))
@@ -145,6 +148,15 @@ export function DistributionTab() {
               placeholder={t('budget.distribution.egCategory')}
               className="flex-1 rounded-md border border-outline-variant bg-surface-container-lowest px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-tertiary"
             />
+            <div className="flex items-center gap-1">
+              <input
+                type="number" min="0" max="100" step="0.5"
+                value={newPct}
+                onChange={e => setNewPct(e.target.value)}
+                className="w-16 text-right rounded-md border border-outline-variant bg-surface-container-lowest px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-tertiary"
+              />
+              <span className="text-sm text-on-surface-variant">%</span>
+            </div>
             <Button size="sm" variant="secondary" onClick={addItem} disabled={!newLabel.trim()}>
               <span className="material-symbols-outlined text-sm">add</span>
               {t('common.add')}

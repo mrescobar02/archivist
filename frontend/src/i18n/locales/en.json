@@ -99,7 +99,10 @@
       "source": "Source",
       "egEmployer": "e.g. Employer name",
       "editTitle": "Edit Income",
-      "addTitle": "Add Income"
+      "addTitle": "Add Income",
+      "noAccountWarning": "Please add a bank account before recording income.",
+      "typeTooltip": "Categorize your income: salary, freelance, investment, rental, business, gift, or other.",
+      "quickFill": "Quick fill from template"
     },
     "expenses": {
       "count": "{{count}} expenses",
@@ -115,7 +118,9 @@
       "receiptDetectedBadge": "AI detected",
       "viewAll": "General",
       "viewMonth": "By Month",
-      "noExpensesMonth": "No expenses this month."
+      "noExpensesMonth": "No expenses this month.",
+      "categoryTooltip": "Group your expenses by category to see spending patterns.",
+      "typeTooltip": "Fixed: recurring monthly expenses. Variable: one-time or irregular expenses."
     }
   },
   "accounts": {
@@ -576,7 +581,14 @@
     "saveProfile": "Save profile",
     "language": "Language",
     "languageEs": "Español",
-    "languageEn": "English"
+    "languageEn": "English",
+    "frequentIncomes": {
+      "title": "Frequent Incomes",
+      "subtitle": "Save recurring income templates to fill forms faster.",
+      "addNew": "Add new template",
+      "namePlaceholder": "e.g. Monthly salary",
+      "add": "Add template"
+    }
   },
   "reports": {
     "title": "Reports",
