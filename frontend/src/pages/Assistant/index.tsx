@@ -21,19 +21,48 @@ export function AssistantPage() {
   const { data: conversations = [] } = useConversations()
   const deleteConversation = useDeleteConversation()
   const [activeConvId, setActiveConvId] = useState<number | null>(null)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  // Start closed on mobile, open on desktop
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 768)
 
-  const handleNewChat = () => setActiveConvId(null)
+  const closeSidebarOnMobile = () => {
+    if (window.innerWidth < 768) setSidebarOpen(false)
+  }
+
+  const handleNewChat = () => {
+    setActiveConvId(null)
+    closeSidebarOnMobile()
+  }
   const handleConvCreated = (id: number) => setActiveConvId(id)
+  const handleSelectConv = (id: number) => {
+    setActiveConvId(id)
+    closeSidebarOnMobile()
+  }
 
   const groups = groupByDay(conversations, t)
 
   return (
     <div className="flex h-[calc(100dvh-4rem)] md:h-screen overflow-hidden">
-      {/* Sidebar */}
+
+      {/* Mobile backdrop — only rendered when sidebar is open on mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar
+          Mobile:  fixed overlay that slides in from the left, sits above content
+          Desktop: inline flex element that collapses via width animation */}
       <aside className={cn(
-        'flex-shrink-0 flex flex-col bg-neutral-50 border-r border-outline/10 transition-all duration-200 overflow-hidden',
-        sidebarOpen ? 'w-56' : 'w-0'
+        'flex flex-col bg-neutral-50 border-r border-outline/10 overflow-hidden',
+        // Mobile: fixed overlay, slides via transform
+        'fixed top-0 bottom-16 left-0 z-50 w-64 transition-transform duration-250',
+        // Desktop: static inline, collapses via width
+        'md:static md:z-auto md:bottom-auto md:top-auto md:transition-[width] md:duration-200',
+        sidebarOpen
+          ? 'translate-x-0 md:w-56'
+          : '-translate-x-full md:w-0 md:translate-x-0'
       )}>
         <div className="p-3 flex-shrink-0">
           <button
@@ -56,7 +85,7 @@ export function AssistantPage() {
                   {items.map(conv => (
                     <div key={conv.id} className="group flex items-center gap-1">
                       <button
-                        onClick={() => setActiveConvId(conv.id)}
+                        onClick={() => handleSelectConv(conv.id)}
                         className={cn(
                           'flex-1 min-w-0 text-left px-2 py-1.5 rounded-lg text-xs transition-colors truncate',
                           activeConvId === conv.id
@@ -85,8 +114,8 @@ export function AssistantPage() {
       </aside>
 
       {/* Main chat area */}
-      <div className="flex-1 flex flex-col min-w-0 p-8 overflow-hidden">
-        <div className="mb-6 flex-shrink-0 flex items-center gap-3">
+      <div className="flex-1 flex flex-col min-w-0 p-4 sm:p-8 overflow-hidden">
+        <div className="mb-4 sm:mb-6 flex-shrink-0 flex items-center gap-3">
           <button
             onClick={() => setSidebarOpen(o => !o)}
             className="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors"
@@ -94,8 +123,8 @@ export function AssistantPage() {
             <span className="material-symbols-outlined text-xl">menu</span>
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-on-surface">{t('assistant.title')}</h1>
-            <p className="text-sm text-on-surface-variant mt-0.5">{t('assistant.subtitle')}</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-on-surface">{t('assistant.title')}</h1>
+            <p className="text-xs sm:text-sm text-on-surface-variant mt-0.5">{t('assistant.subtitle')}</p>
           </div>
         </div>
         <ChatTab
