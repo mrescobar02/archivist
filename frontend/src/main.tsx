@@ -15,9 +15,19 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <App />
       </BrowserRouter>
     </QueryClientProvider>
   </StrictMode>
 )
+
+// Remove splash once React has rendered and CSS modules are injected.
+// Double-RAF ensures we're past the first browser paint.
+function removeSplash() {
+  const el = document.getElementById('app-splash')
+  if (!el) return
+  el.style.opacity = '0'
+  setTimeout(() => el.remove(), 150)
+}
+requestAnimationFrame(() => requestAnimationFrame(removeSplash))

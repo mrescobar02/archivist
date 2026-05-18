@@ -25,6 +25,14 @@
     <meta name="twitter:description" content="Track every expense, stick to your budget, and reach your financial goals. AI-powered, free during beta." />
     <meta name="twitter:image" content="https://archivist-lemon.vercel.app/og-image.png" />
 
+    <!-- Critical inline styles: applied instantly before any external CSS or JS -->
+    <style>
+      *, *::before, *::after { box-sizing: border-box; }
+      html { line-height: 1.5; }
+      body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #f9f9f9; color: #2d3435; }
+      #root { min-height: 100vh; }
+    </style>
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -33,11 +41,29 @@
       rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
       rel="stylesheet"
     />
+
   </head>
   <body>
+    <!-- Splash screen: visible instantly, covers layout flash until React + CSS are ready -->
+    <div id="app-splash" style="
+      position:fixed;inset:0;z-index:99999;
+      background:#f9f9f9;
+      display:flex;align-items:center;justify-content:center;
+      transition:opacity 0.15s ease;
+    ">
+      <div style="
+        width:22px;height:22px;
+        border:2.5px solid #dde4e5;
+        border-top-color:#5a6061;
+        border-radius:50%;
+        animation:_sp 0.7s linear infinite;
+      "></div>
+    </div>
+    <style>@keyframes _sp{to{transform:rotate(360deg)}}</style>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
