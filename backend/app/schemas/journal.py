@@ -1,19 +1,19 @@
 from typing import Optional
 from datetime import datetime
 from typing import Literal
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class JournalEntryCreate(BaseModel):
     model_config = ConfigDict(extra='forbid')
-    title: str
-    content: str
+    title: str = Field(..., max_length=200)
+    content: str = Field(..., max_length=20_000)
     mood: Optional[Literal["stressed", "neutral", "positive"]] = None
 
 
 class JournalEntryUpdate(BaseModel):
-    title: Optional[str] = None
-    content: Optional[str] = None
+    title: Optional[str] = Field(None, max_length=200)
+    content: Optional[str] = Field(None, max_length=20_000)
     mood: Optional[Literal["stressed", "neutral", "positive"]] = None
 
 

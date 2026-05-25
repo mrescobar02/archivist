@@ -4,10 +4,11 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from sqlmodel import Session, select
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from ..db.session import get_session
 from ..core.auth import get_current_user, CurrentUser
 from ..core.billing import require_pro
+from ..core.limiter import limiter
 from ..services.groq_client import get_async_client, get_model, get_vision_model, get_max_tokens
 from ..services.advisor_context import build_context, build_system_prompt
 from ..services.rewards import award_hidden_reward
@@ -49,21 +50,33 @@ Your role is to inform, not to decide. The user is asking for a perspective, not
 }
 
 
+ALLOWED_ROLES = {"user", "assistant"}
+IMAGE_BASE64_MAX_BYTES = 5 * 1024 * 1024  # 5MB decoded (~6.8MB base64)
+
+
 class Message(BaseModel):
-    role: str
-    content: str
+    role: str = Field(..., max_length=20)
+    content: str = Field(..., max_length=10_000)
+
+    @field_validator("role")
+    @classmethod
+    def role_allowed(cls, v: str) -> str:
+        if v not in ALLOWED_ROLES:
+            raise ValueError(f"role must be one of {ALLOWED_ROLES}")
+        return v
 
 
 class AdvisorRequest(BaseModel):
-    message: str
-    history: List[Message] = []
+    message: str = Field("", max_length=2_000)
+    history: List[Message] = Field(default_factory=list, max_length=50)
     include_context: bool = True
-    advisor_mode: str = "moderate"
-    image_base64: Optional[str] = None
-    image_media_type: Optional[str] = "image/jpeg"
+    advisor_mode: str = Field("moderate", max_length=20)
+    image_base64: Optional[str] = Field(None, max_length=7_000_000)  # ~5MB image
+    image_media_type: Optional[str] = Field("image/jpeg", max_length=50)
 
 
 @router.post("")
+@limiter.limit("30/hour")
 async def advisor_chat(
     request: Request,
     body: AdvisorRequest,
@@ -175,6 +188,7 @@ Be concise (max 280 words), use real numbers from the context, and keep an encou
 
 
 @router.post("/report")
+@limiter.limit("10/hour")
 async def financial_report(
     request: Request,
     session: Session = Depends(get_session),

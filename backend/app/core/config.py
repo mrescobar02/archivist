@@ -21,10 +21,17 @@ class Settings(BaseSettings):
     STRIPE_SECRET_KEY: str = ""
     STRIPE_WEBHOOK_SECRET: str = ""
     STRIPE_PRO_PRICE_ID: str = ""
+    SITE_URL: str = "https://archivist-lemon.vercel.app"
+
+    ENV: str = "production"  # set to "development" to enable /docs
 
     @property
     def cors_origins_list(self) -> List[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",")]
+
+    @property
+    def is_development(self) -> bool:
+        return self.ENV.lower() == "development"
 
 
 settings = Settings()

@@ -5,12 +5,13 @@ import logging
 from typing import List
 from decimal import Decimal
 from datetime import date
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
-from pydantic import BaseModel as PydanticBaseModel
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request
+from pydantic import BaseModel as PydanticBaseModel, Field
 from sqlmodel import Session, select
 from ..db.session import get_session
 from ..core.auth import get_current_user, CurrentUser
 from ..core.billing import require_pro
+from ..core.limiter import limiter
 from ..models.receipt_scan import ReceiptScan
 from ..models.expense import Expense
 from ..models.account import Account
@@ -22,30 +23,38 @@ from ..core.config import settings
 router = APIRouter(prefix="/receipt", tags=["receipt"])
 logger = logging.getLogger(__name__)
 
+ALLOWED_MEDIA_TYPES = {"image/jpeg", "image/png", "image/webp"}
+
 
 class AnalyzeBase64Request(PydanticBaseModel):
-    image_base64: str
-    image_media_type: str = "image/jpeg"
+    image_base64: str = Field(..., max_length=7_000_000)
+    image_media_type: str = Field("image/jpeg", max_length=50)
 
 
 @router.post("/analyze")
+@limiter.limit("20/hour")
 def analyze_receipt_base64(
+    request: Request,
     body: AnalyzeBase64Request,
     session: Session = Depends(get_session),
     current_user: CurrentUser = Depends(require_pro),
 ):
     if not get_client():
         raise HTTPException(status_code=503, detail="AI features not configured — set GROQ_API_KEY")
+    if body.image_media_type not in ALLOWED_MEDIA_TYPES:
+        raise HTTPException(status_code=415, detail="Unsupported image type. Use JPEG, PNG, or WebP")
     try:
         image_bytes = b64lib.b64decode(body.image_base64)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid base64 image data")
+    if len(image_bytes) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="Image too large (max 5MB)")
     try:
         extracted = extract_from_image(image_bytes, body.image_media_type, session)
         return extracted
     except Exception as e:
         logger.error(f"Receipt analysis failed: {e}")
-        raise HTTPException(status_code=422, detail=str(e))
+        raise HTTPException(status_code=422, detail="Could not extract receipt data")
 
 
 ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp"}

@@ -37,8 +37,8 @@ def create_checkout(current_user: CurrentUser = Depends(get_current_user)):
             payment_method_types=["card"],
             line_items=[{"price": settings.STRIPE_PRO_PRICE_ID, "quantity": 1}],
             mode="subscription",
-            success_url="https://app.thearchivistapp.com/profile?upgraded=1",
-            cancel_url="https://app.thearchivistapp.com/profile",
+            success_url=f"{settings.SITE_URL}/profile?upgraded=1",
+            cancel_url=f"{settings.SITE_URL}/profile",
         )
         return CheckoutResponse(checkout_url=session.url)
     except Exception as e:
@@ -60,7 +60,7 @@ def create_portal(current_user: CurrentUser = Depends(get_current_user)):
 
         portal = stripe.billing_portal.Session.create(
             customer=customers.data[0].id,
-            return_url="https://app.thearchivistapp.com/profile",
+            return_url=f"{settings.SITE_URL}/profile",
         )
         return PortalResponse(portal_url=portal.url)
     except HTTPException:

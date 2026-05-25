@@ -2,3 +2,6 @@
 name = "archivist-backend"
 version = "1.0.0"
 requires-python = ">=3.9"
+dependencies = [
+    "slowapi>=0.1.9",
+]

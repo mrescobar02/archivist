@@ -7,10 +7,14 @@ load_dotenv()
 from fastapi.encoders import ENCODERS_BY_TYPE
 ENCODERS_BY_TYPE[Decimal] = float
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from app.core.config import settings
+from app.core.limiter import limiter
 from app.db.session import create_db_and_tables
 from app.models import *  # noqa: F401,F403 — registers all models with SQLModel metadata
 from app.routers import (
@@ -29,14 +33,22 @@ app = FastAPI(
     title="The Archivist",
     description="Household Finance Management API",
     version="2.0.0",
+    # Disable interactive docs in production — exposes full API surface
+    docs_url="/docs" if settings.is_development else None,
+    redoc_url="/redoc" if settings.is_development else None,
+    openapi_url="/openapi.json" if settings.is_development else None,
 )
+
+# Rate limiting
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Accept"],
 )
 
 
@@ -49,15 +61,10 @@ def on_startup():
     else:
         logger.warning("GROQ_API_KEY not set — AI features disabled")
     logger.info(f"CORS origins: {settings.cors_origins_list}")
-    if not settings.SUPABASE_JWT_SECRET:
-        logger.warning("SUPABASE_JWT_SECRET not set — running in dev mode (no JWT verification)")
+    if not settings.SUPABASE_URL:
+        logger.warning("SUPABASE_URL not set — running in dev mode (no JWT verification)")
     if not settings.STRIPE_SECRET_KEY:
         logger.warning("STRIPE_SECRET_KEY not set — all users have Pro access (beta mode)")
-
-
-@app.get("/")
-def root():
-    return {"name": "The Archivist", "version": "2.0.0", "docs": "/docs"}
 
 
 @app.get("/health")
