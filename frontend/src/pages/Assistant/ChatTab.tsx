@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { streamAdvisor, analyzeReceiptBase64, createExpense, type AdvisorMode } from '@/services/api'
 import { useCategories } from '@/hooks/useCategories'
@@ -11,6 +11,41 @@ import { Select } from '@/components/primitives/Select'
 import { cn } from '@/lib/utils'
 import { useCheckRewards } from '@/hooks/useCheckRewards'
 import { useUiStore } from '@/store/ui'
+
+const RATE_LIMIT = 5
+const RATE_WINDOW_MS = 60 * 60 * 1000
+const RL_KEY = 'advisor_rl'
+
+interface RLState { count: number; windowStart: number }
+
+function getRLState(): RLState {
+  try {
+    const raw = localStorage.getItem(RL_KEY)
+    if (!raw) return { count: 0, windowStart: Date.now() }
+    const s: RLState = JSON.parse(raw)
+    if (Date.now() - s.windowStart >= RATE_WINDOW_MS) return { count: 0, windowStart: Date.now() }
+    return s
+  } catch { return { count: 0, windowStart: Date.now() } }
+}
+
+function useAdvisorRateLimit() {
+  const [state, setState] = useState<RLState>(getRLState)
+
+  const increment = useCallback(() => {
+    setState(prev => {
+      const now = Date.now()
+      const base = now - prev.windowStart >= RATE_WINDOW_MS ? { count: 0, windowStart: now } : prev
+      const next = { count: base.count + 1, windowStart: base.windowStart }
+      localStorage.setItem(RL_KEY, JSON.stringify(next))
+      return next
+    })
+  }, [])
+
+  const renewsAt = new Date(state.windowStart + RATE_WINDOW_MS)
+  const renewsAtStr = renewsAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+
+  return { count: state.count, limit: RATE_LIMIT, increment, renewsAt: renewsAtStr, exhausted: state.count >= RATE_LIMIT }
+}
 
 type MessageKind = 'text' | 'analyzing' | 'expense-card' | 'expense-saved' | 'expense-error' | 'image'
 
@@ -98,6 +133,8 @@ export function ChatTab({ conversationId, onConversationCreated, onNewChat: _onN
   const createConversation = useCreateConversation()
   const addChatMessage = useAddChatMessage()
   const { data: savedMessages } = useChatMessages(conversationId)
+
+  const rl = useAdvisorRateLimit()
 
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
@@ -241,7 +278,8 @@ export function ChatTab({ conversationId, onConversationCreated, onNewChat: _onN
 
   const sendToAdvisor = async (text: string) => {
     const msg = text.trim()
-    if (!msg || streaming) return
+    if (!msg || streaming || rl.exhausted) return
+    rl.increment()
     setInput('')
 
     const convId = await ensureConversation(msg)
@@ -401,6 +439,18 @@ export function ChatTab({ conversationId, onConversationCreated, onNewChat: _onN
         </div>
       )}
 
+      {/* Rate limit indicator */}
+      <div className="flex items-center gap-2 mb-1.5 px-1">
+        <span className={cn('text-[11px] tabular-nums', rl.exhausted ? 'text-error' : 'text-on-surface-variant/50')}>
+          {rl.count}/{rl.limit}
+        </span>
+        {rl.count >= rl.limit - 1 && (
+          <span className="text-[11px] text-on-surface-variant/50">
+            · {t('assistant.chat.renewsAt', { time: rl.renewsAt })}
+          </span>
+        )}
+      </div>
+
       {/* Input row */}
       <div className="flex gap-2 items-end">
         <input ref={fileRef} type="file" accept="image/*" className="hidden"
@@ -413,11 +463,11 @@ export function ChatTab({ conversationId, onConversationCreated, onNewChat: _onN
         <textarea ref={textareaRef} value={input} rows={1}
           onChange={e => { setInput(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px' }}
           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
-          placeholder={pendingImage ? t('assistant.chat.receiptHint') : t('assistant.chat.generalPlaceholder')}
-          disabled={streaming || !!pendingImage}
+          placeholder={rl.exhausted ? t('assistant.chat.limitReached', { time: rl.renewsAt }) : (pendingImage ? t('assistant.chat.receiptHint') : t('assistant.chat.generalPlaceholder'))}
+          disabled={streaming || !!pendingImage || rl.exhausted}
           className="flex-1 rounded-xl border border-outline-variant bg-surface-container-lowest px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-tertiary disabled:opacity-60 resize-none leading-relaxed"
           style={{ minHeight: '42px' }} />
-        <Button loading={streaming} onClick={handleSend} disabled={!input.trim() && !pendingImage} className="flex-shrink-0 h-10">
+        <Button loading={streaming} onClick={handleSend} disabled={(!input.trim() && !pendingImage) || rl.exhausted} className="flex-shrink-0 h-10">
           <span className="material-symbols-outlined">{pendingImage ? 'document_scanner' : 'send'}</span>
         </Button>
       </div>

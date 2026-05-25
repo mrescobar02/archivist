@@ -372,7 +372,9 @@
       "receiptDiscard": "Discard",
       "receiptSaved": "Expense saved successfully",
       "receiptHint": "Send a receipt photo and I'll detect the expense details for you.",
-      "receiptNoData": "I couldn't identify a receipt in this image."
+      "receiptNoData": "I couldn't identify a receipt in this image.",
+      "renewsAt": "renews at {{time}}",
+      "limitReached": "Limit reached · renews at {{time}}"
     },
     "receipt": {
       "uploadLabel": "Upload receipt image",

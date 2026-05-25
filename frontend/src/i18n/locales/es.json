@@ -372,7 +372,9 @@
       "receiptDiscard": "Descartar",
       "receiptSaved": "Gasto guardado exitosamente",
       "receiptHint": "Envía la foto de un recibo y detecto los datos del gasto automáticamente.",
-      "receiptNoData": "No encontré un recibo en esta imagen."
+      "receiptNoData": "No encontré un recibo en esta imagen.",
+      "renewsAt": "renueva a las {{time}}",
+      "limitReached": "Límite alcanzado · renueva a las {{time}}"
     },
     "receipt": {
       "uploadLabel": "Subir imagen del recibo",
