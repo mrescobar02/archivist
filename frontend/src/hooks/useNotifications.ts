@@ -26,7 +26,6 @@ export function useNotifications() {
   return useQuery({
     queryKey: ['notifications'],
     queryFn: fetchNotifications,
-    staleTime: 60_000,
     select: (data) => ({
       ...data,
       unreadCount: data.notifications.filter(n => !data.readIds.has(n.id)).length,

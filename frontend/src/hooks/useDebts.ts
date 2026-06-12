@@ -15,12 +15,17 @@ export function useDebtPayments(debt_id: number) {
   })
 }
 
+const invalidateDebts = (qc: ReturnType<typeof useQueryClient>) => {
+  qc.invalidateQueries({ queryKey: ['debts'] })
+  qc.invalidateQueries({ queryKey: ['dashboard'] })
+}
+
 export function useCreateDebt() {
   const qc = useQueryClient()
   const { showToast } = useUiStore()
   return useMutation({
     mutationFn: api.createDebt,
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['debts'] }); showToast('Debt added') },
+    onSuccess: () => { invalidateDebts(qc); showToast('Debt added') },
     onError: (e: Error) => showToast(e.message, 'error'),
   })
 }
@@ -31,7 +36,7 @@ export function useUpdateDebt() {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Parameters<typeof api.updateDebt>[1] }) =>
       api.updateDebt(id, data),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['debts'] }); showToast('Debt updated') },
+    onSuccess: () => { invalidateDebts(qc); showToast('Debt updated') },
     onError: (e: Error) => showToast(e.message, 'error'),
   })
 }
@@ -41,7 +46,7 @@ export function useDeleteDebt() {
   const { showToast } = useUiStore()
   return useMutation({
     mutationFn: api.deleteDebt,
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['debts'] }); showToast('Debt deleted') },
+    onSuccess: () => { invalidateDebts(qc); showToast('Debt deleted') },
     onError: (e: Error) => showToast(e.message, 'error'),
   })
 }
@@ -54,9 +59,8 @@ export function useCreateDebtPayment() {
     mutationFn: ({ debt_id, data }: { debt_id: number; data: Parameters<typeof api.createDebtPayment>[1] }) =>
       api.createDebtPayment(debt_id, data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['debts'] })
+      invalidateDebts(qc)
       qc.invalidateQueries({ queryKey: ['debt-payments'] })
-      qc.invalidateQueries({ queryKey: ['dashboard'] })
       showToast('Payment logged')
       checkRewards()
     },

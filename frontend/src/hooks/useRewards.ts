@@ -5,7 +5,6 @@ export function useRewards() {
   return useQuery({
     queryKey: ['rewards'],
     queryFn: api.getRewards,
-    staleTime: 30_000,
   })
 }
 

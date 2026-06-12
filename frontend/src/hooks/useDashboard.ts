@@ -5,6 +5,5 @@ export function useDashboard() {
   return useQuery({
     queryKey: ['dashboard'],
     queryFn: api.getDashboardSummary,
-    staleTime: 30_000,
   })
 }

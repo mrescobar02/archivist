@@ -14,12 +14,18 @@ export function useContributions(fund_id?: number) {
   })
 }
 
+const invalidateSavings = (qc: ReturnType<typeof useQueryClient>) => {
+  qc.invalidateQueries({ queryKey: ['savings-funds'] })
+  qc.invalidateQueries({ queryKey: ['contributions'] })
+  qc.invalidateQueries({ queryKey: ['dashboard'] })
+}
+
 export function useCreateSavingsFund() {
   const qc = useQueryClient()
   const { showToast } = useUiStore()
   return useMutation({
     mutationFn: api.createSavingsFund,
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['savings-funds'] }); showToast('Savings fund created') },
+    onSuccess: () => { invalidateSavings(qc); showToast('Savings fund created') },
     onError: (e: Error) => showToast(e.message, 'error'),
   })
 }
@@ -29,7 +35,7 @@ export function useDeleteSavingsFund() {
   const { showToast } = useUiStore()
   return useMutation({
     mutationFn: api.deleteSavingsFund,
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['savings-funds'] }); showToast('Fund deleted') },
+    onSuccess: () => { invalidateSavings(qc); showToast('Fund deleted') },
     onError: (e: Error) => showToast(e.message, 'error'),
   })
 }
@@ -41,9 +47,7 @@ export function useCreateContribution() {
   return useMutation({
     mutationFn: api.createContribution,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['savings-funds'] })
-      qc.invalidateQueries({ queryKey: ['contributions'] })
-      qc.invalidateQueries({ queryKey: ['dashboard'] })
+      invalidateSavings(qc)
       showToast('Contribution added')
       checkRewards()
     },
@@ -57,8 +61,7 @@ export function useDeleteContribution() {
   return useMutation({
     mutationFn: api.deleteContribution,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['savings-funds'] })
-      qc.invalidateQueries({ queryKey: ['contributions'] })
+      invalidateSavings(qc)
       showToast('Contribution deleted')
     },
     onError: (e: Error) => showToast(e.message, 'error'),

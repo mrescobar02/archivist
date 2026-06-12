@@ -6,14 +6,19 @@ export function useTransfers(params?: { account_id?: number }) {
   return useQuery({ queryKey: ['transfers', params], queryFn: () => api.listTransfers(params) })
 }
 
+const invalidateTransfers = (qc: ReturnType<typeof useQueryClient>) => {
+  qc.invalidateQueries({ queryKey: ['transfers'] })
+  qc.invalidateQueries({ queryKey: ['accounts'] })
+  qc.invalidateQueries({ queryKey: ['dashboard'] })
+}
+
 export function useCreateTransfer() {
   const qc = useQueryClient()
   const { showToast } = useUiStore()
   return useMutation({
     mutationFn: api.createTransfer,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['transfers'] })
-      qc.invalidateQueries({ queryKey: ['accounts'] })
+      invalidateTransfers(qc)
       showToast('Transfer completed')
     },
     onError: (e: Error) => showToast(e.message, 'error'),
@@ -26,8 +31,7 @@ export function useDeleteTransfer() {
   return useMutation({
     mutationFn: api.deleteTransfer,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['transfers'] })
-      qc.invalidateQueries({ queryKey: ['accounts'] })
+      invalidateTransfers(qc)
       showToast('Transfer deleted')
     },
     onError: (e: Error) => showToast(e.message, 'error'),

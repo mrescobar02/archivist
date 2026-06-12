@@ -12,6 +12,11 @@ export function useGoalContributions(goal_id: number) {
   })
 }
 
+const invalidateGoals = (qc: ReturnType<typeof useQueryClient>) => {
+  qc.invalidateQueries({ queryKey: ['goals'] })
+  qc.invalidateQueries({ queryKey: ['dashboard'] })
+}
+
 export function useCreateGoalContribution() {
   const qc = useQueryClient()
   const { showToast } = useUiStore()
@@ -21,8 +26,7 @@ export function useCreateGoalContribution() {
       api.createGoalContribution(goal_id, data),
     onSuccess: (_res, vars) => {
       qc.invalidateQueries({ queryKey: ['goal-contributions', vars.goal_id] })
-      qc.invalidateQueries({ queryKey: ['goals'] })
-      qc.invalidateQueries({ queryKey: ['dashboard'] })
+      invalidateGoals(qc)
       showToast('Contribution added')
       checkRewards()
     },
@@ -38,7 +42,7 @@ export function useDeleteGoalContribution() {
       api.deleteGoalContribution(goal_id, contribution_id),
     onSuccess: (_res, vars) => {
       qc.invalidateQueries({ queryKey: ['goal-contributions', vars.goal_id] })
-      qc.invalidateQueries({ queryKey: ['goals'] })
+      invalidateGoals(qc)
       showToast('Contribution deleted')
     },
     onError: (e: Error) => showToast(e.message, 'error'),
@@ -56,7 +60,7 @@ export function useCreateGoal() {
   return useMutation({
     mutationFn: api.createGoal,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['goals'] })
+      invalidateGoals(qc)
       showToast('Goal created')
       checkRewards()
     },
@@ -77,7 +81,7 @@ export function useUpdateGoal() {
       const wasComplete = prev ? Number(prev.current_amount) >= Number(prev.target_amount) : false
       const isNowComplete = Number(updated.current_amount) >= Number(updated.target_amount)
 
-      qc.invalidateQueries({ queryKey: ['goals'] })
+      invalidateGoals(qc)
       showToast('Goal updated')
 
       if (!wasComplete && isNowComplete) {
@@ -100,7 +104,7 @@ export function useDeleteGoal() {
   const { showToast } = useUiStore()
   return useMutation({
     mutationFn: api.deleteGoal,
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['goals'] }); showToast('Goal deleted') },
+    onSuccess: () => { invalidateGoals(qc); showToast('Goal deleted') },
     onError: (e: Error) => showToast(e.message, 'error'),
   })
 }

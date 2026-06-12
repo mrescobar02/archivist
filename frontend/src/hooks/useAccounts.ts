@@ -6,12 +6,17 @@ export function useAccounts() {
   return useQuery({ queryKey: ['accounts'], queryFn: api.listAccounts })
 }
 
+const invalidateAccounts = (qc: ReturnType<typeof useQueryClient>) => {
+  qc.invalidateQueries({ queryKey: ['accounts'] })
+  qc.invalidateQueries({ queryKey: ['dashboard'] })
+}
+
 export function useCreateAccount() {
   const qc = useQueryClient()
   const { showToast } = useUiStore()
   return useMutation({
     mutationFn: api.createAccount,
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['accounts'] }); showToast('Account created') },
+    onSuccess: () => { invalidateAccounts(qc); showToast('Account created') },
     onError: (e: Error) => showToast(e.message, 'error'),
   })
 }
@@ -22,7 +27,7 @@ export function useUpdateAccount() {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Parameters<typeof api.updateAccount>[1] }) =>
       api.updateAccount(id, data),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['accounts'] }); showToast('Account updated') },
+    onSuccess: () => { invalidateAccounts(qc); showToast('Account updated') },
     onError: (e: Error) => showToast(e.message, 'error'),
   })
 }
@@ -32,7 +37,7 @@ export function useDeleteAccount() {
   const { showToast } = useUiStore()
   return useMutation({
     mutationFn: api.deleteAccount,
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['accounts'] }); showToast('Account deleted') },
+    onSuccess: () => { invalidateAccounts(qc); showToast('Account deleted') },
     onError: (e: Error) => showToast(e.message, 'error'),
   })
 }

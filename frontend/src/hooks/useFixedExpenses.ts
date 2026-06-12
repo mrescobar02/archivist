@@ -10,12 +10,18 @@ export function useUpcomingFixedExpenses() {
   return useQuery({ queryKey: ['fixed-expenses-upcoming'], queryFn: () => api.getUpcomingFixedExpenses() })
 }
 
+const invalidateFixedExpenses = (qc: ReturnType<typeof useQueryClient>) => {
+  qc.invalidateQueries({ queryKey: ['fixed-expenses'] })
+  qc.invalidateQueries({ queryKey: ['fixed-expenses-upcoming'] })
+  qc.invalidateQueries({ queryKey: ['dashboard'] })
+}
+
 export function useCreateFixedExpense() {
   const qc = useQueryClient()
   const { showToast } = useUiStore()
   return useMutation({
     mutationFn: api.createFixedExpense,
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['fixed-expenses'] }); showToast('Fixed expense added') },
+    onSuccess: () => { invalidateFixedExpenses(qc); showToast('Fixed expense added') },
     onError: (e: Error) => showToast(e.message, 'error'),
   })
 }
@@ -26,7 +32,7 @@ export function useUpdateFixedExpense() {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Parameters<typeof api.updateFixedExpense>[1] }) =>
       api.updateFixedExpense(id, data),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['fixed-expenses'] }); showToast('Fixed expense updated') },
+    onSuccess: () => { invalidateFixedExpenses(qc); showToast('Fixed expense updated') },
     onError: (e: Error) => showToast(e.message, 'error'),
   })
 }
@@ -36,7 +42,7 @@ export function useDeleteFixedExpense() {
   const { showToast } = useUiStore()
   return useMutation({
     mutationFn: api.deleteFixedExpense,
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['fixed-expenses'] }); showToast('Fixed expense deleted') },
+    onSuccess: () => { invalidateFixedExpenses(qc); showToast('Fixed expense deleted') },
     onError: (e: Error) => showToast(e.message, 'error'),
   })
 }
