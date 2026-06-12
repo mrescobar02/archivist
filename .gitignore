@@ -47,3 +47,10 @@ archivist-context/
 # Claude Code memory
 .claude/
 .vite/
+
+# Local agent/tool artifacts
+.agents/
+--full-page
+og-image-post.html
+skills-lock.json
+squirrel.toml
